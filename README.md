@@ -1,0 +1,192 @@
+# Clara — Multi-Step Insurance Quote Calculator
+
+> **Clara Onboarding Team · Frontend Challenge**  
+> A production-grade, multi-step insurance quote calculator built in React + TypeScript.
+
+---
+
+## Table of Contents
+
+1. [Setup Instructions](#setup-instructions)
+2. [Available Scripts](#available-scripts)
+3. [Architecture & Decisions](#architecture--decisions)
+4. [Folder Structure](#folder-structure)
+5. [Phase Roadmap](#phase-roadmap)
+
+---
+
+## Setup Instructions
+
+### Prerequisites
+
+| Tool | Minimum Version |
+|------|----------------|
+| Node.js | `>= 18.x` |
+| npm | `>= 9.x` |
+| Git | `>= 2.x` |
+
+### Installation
+
+```bash
+# 1. Clone the repository
+git clone https://github.com/osvaldopineda/clara-challenge.git
+cd clara-challenge
+
+# 2. Install dependencies
+npm install
+
+# 3. Start the development server
+npm run dev
+```
+
+The app will be available at **http://localhost:5173**.
+
+### Linting & Formatting
+
+```bash
+# Run ESLint
+npm run lint
+
+# Auto-fix ESLint issues
+npm run lint:fix
+
+# Format with Prettier
+npm run format
+
+# Format check (CI-safe)
+npm run format:check
+```
+
+---
+
+## Available Scripts
+
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start Vite dev server with HMR |
+| `npm run build` | Compile TypeScript + bundle for production |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint across all `.ts` / `.tsx` files |
+| `npm run lint:fix` | Run ESLint and auto-fix fixable issues |
+| `npm run format` | Format all files with Prettier |
+| `npm run format:check` | Check formatting without writing files (for CI) |
+
+---
+
+## Architecture & Decisions
+
+### ⚡ Vite — Build Tool
+
+**Why Vite over Create React App (CRA)?**
+
+CRA uses Webpack under the hood, which bundles *everything* before the browser can load a single module. Vite instead leverages **native ES Modules** during development: the browser requests individual files as needed, and Vite only transforms what is actually asked for. This results in:
+
+- **Sub-second cold starts** regardless of project size.
+- **True Hot Module Replacement (HMR)** that updates only the changed module without re-compiling the entire bundle.
+- First-class TypeScript support with configurable `tsconfig.app.json` for application code and `tsconfig.node.json` for the Vite config file itself.
+
+CRA is effectively unmaintained as of 2023. Vite is the community's accepted successor with an active ecosystem and support from the Vite/Rollup projects.
+
+---
+
+### 🎨 Material UI (MUI v6)
+
+**Why MUI over plain CSS or Tailwind?**
+
+The challenge calls for a professional, accessible form-heavy interface with consistent visual language. MUI provides:
+
+- A **complete accessible component library** — inputs, steppers, buttons, dialogs — that come WCAG-compliant out of the box.
+- The **`sx` prop and `theme`** system allow deep customisation without fighting the framework. The entire design token set (colors, typography, spacing, breakpoints) lives in one `theme.ts` file.
+- **Emotion** (the CSS-in-JS engine powering MUI) performs server-side rendering, critical CSS extraction, and zero-runtime style injection automatically.
+
+For a multi-step insurance flow, MUI's `Stepper` component is a perfect semantic fit.
+
+---
+
+### 📋 React Hook Form + Yup
+
+**Why RHF + Yup over Formik or controlled state?**
+
+Multi-step forms with large field counts are where *uncontrolled* form management shines.
+
+| Concern | React Hook Form + Yup |
+|---------|----------------------|
+| **Re-renders** | Components do **not** re-render on every keystroke — inputs register themselves via refs. |
+| **Validation** | Yup schemas are *schema-first*: a single `object().shape({})` declaration drives both runtime validation and TypeScript inference via `yup.InferType`. |
+| **Multi-step persistence** | `useForm` + `context` allow step-level validation while accumulating data across steps without remounting. |
+| **Resolver bridge** | `@hookform/resolvers/yup` adapts Yup schemas into RHF's resolver API with one line of code. |
+
+Compared to Formik, RHF has zero-dependency overhead and benchmarks 10–20x fewer re-renders on complex forms.
+
+---
+
+### 🔀 React Router DOM v6
+
+Used for declarative, nested routing between wizard steps. Each step is a distinct URL (`/quote/personal`, `/quote/coverage`, `/quote/summary`) enabling:
+
+- **Browser history integration** — back/forward navigation works naturally.
+- **Deep-linkable steps** for QA testing.
+- URL-driven step validation guards will be added in Phase 3.
+
+---
+
+### 🆔 uuid
+
+Deterministic ID generation for dynamic form fields, quote sessions, and list-rendering keys. Using `uuid v4` (random) avoids collisions in client-generated sessions without a backend round-trip.
+
+---
+
+## Folder Structure
+
+```
+src/
+├── assets/
+│   └── icons/              # SVG icons and static assets
+│
+├── components/
+│   ├── common/             # Reusable, domain-agnostic UI atoms
+│   │   └── index.ts        # Barrel export
+│   ├── forms/              # Step-specific form components (StepPersonalInfo, etc.)
+│   │   └── index.ts
+│   └── layout/             # App shell: AppLayout, Navbar, Stepper wrapper
+│       └── index.ts
+│
+├── context/
+│   └── index.ts            # Global React context providers (QuoteContext)
+│
+├── hooks/
+│   └── index.ts            # Custom hooks (useQuoteForm, useStepNavigation)
+│
+├── pages/
+│   └── index.ts            # Route-level page components
+│
+├── services/
+│   └── index.ts            # API calls and external data fetching
+│
+├── types/
+│   ├── quote.types.ts      # Domain interfaces and enums
+│   └── index.ts            # Barrel export
+│
+└── utils/
+    └── index.ts            # Pure utility functions (formatCurrency, calculatePremium)
+```
+
+> **Barrel exports** (`index.ts`) in every directory enable clean, deep-import-free paths:  
+> `import { Button } from '@/components/common'` instead of `../../components/common/Button/Button`.
+
+---
+
+## Phase Roadmap
+
+| Phase | Title | Status |
+|-------|-------|--------|
+| **1** | Scaffolding, Tooling & Base Configuration | ✅ Complete |
+| **2** | MUI Theme & Global Layout | 🔜 Planned |
+| **3** | Quote Context & React Router Wizard | 🔜 Planned |
+| **4** | Form Steps with RHF + Yup Validation | 🔜 Planned |
+| **5** | Quote Summary & Premium Calculation | 🔜 Planned |
+| **6** | Polish, Animations & Final QA | 🔜 Planned |
+
+---
+
+*Built with ❤️ for Clara's Onboarding Team.*
