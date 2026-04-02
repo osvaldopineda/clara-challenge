@@ -10,8 +10,9 @@
 1. [Setup Instructions](#setup-instructions)
 2. [Available Scripts](#available-scripts)
 3. [Architecture & Decisions](#architecture--decisions)
-4. [Folder Structure](#folder-structure)
-5. [Phase Roadmap](#phase-roadmap)
+4. [Business Logic & Testing Strategy](#business-logic--testing-strategy)
+5. [Folder Structure](#folder-structure)
+6. [Phase Roadmap](#phase-roadmap)
 
 ---
 
@@ -70,6 +71,9 @@ npm run format:check
 | `npm run lint:fix` | Run ESLint and auto-fix fixable issues |
 | `npm run format` | Format all files with Prettier |
 | `npm run format:check` | Check formatting without writing files (for CI) |
+| `npm test` | Run Vitest unit tests once (CI mode) |
+| `npm run test:watch` | Run Vitest in interactive watch mode |
+| `npm run test:coverage` | Run tests and generate v8 coverage report |
 
 ---
 
@@ -176,16 +180,84 @@ src/
 
 ---
 
+## Business Logic & Testing Strategy
+
+### Why Extract Pure Functions Before Touching React?
+
+The premium calculation is the **core deliverable** of this application. By implementing it as a pure, stateless function *outside of any React component*, we achieve:
+
+| Principle | Rationale |
+|-----------|----------|
+| **Separation of concerns** | The formula has zero dependency on React, MUI, or any UI library. It can be moved to a backend, a shared package, or a Web Worker without modification. |
+| **Testability** | A pure function `f(input) → output` requires no DOM, no render cycle, and no mocking. Tests run in milliseconds. |
+| **Determinism** | Given the same input, the function always returns the same output — no side effects, no shared state. |
+| **Discoverability** | Business stakeholders can review `premiumCalculator.ts` in isolation. The math is not buried in a form `onSubmit` handler. |
+
+### The Formula
+
+Extracted directly from the Clara ONB Frontend Challenge PDF:
+
+```
+monthlyPremium = basePremium × ageMultiplier × conditionsMultiplier × tobaccoMultiplier × spouseMultiplier
+```
+
+#### Base Premiums
+
+| Tier | Base Monthly Premium |
+|------|---------------------|
+| Basic | $50 |
+| Standard | $100 |
+| Premium | $200 |
+
+#### Multipliers
+
+| Factor | Condition | Multiplier |
+|--------|-----------|------------|
+| Age | `age > 65` | `× 1.5` |
+| Pre-existing conditions | Any condition selected | `× 1.3` |
+| Tobacco use | Uses any tobacco product | `× 1.2` |
+| Spouse coverage | Spouse included | `× 1.4` |
+| *(no condition)* | Not applicable | `× 1.0` |
+
+#### Canonical Reference Example (from PDF)
+
+> A **70-year-old** selecting **Standard coverage**, with a **pre-existing condition**, who **smokes**, and wants **spouse coverage**:
+>
+> `$100 × 1.5 × 1.3 × 1.2 × 1.4 = **$327.60 / month**`
+
+### Testing Strategy
+
+The test suite in `src/utils/premiumCalculator.test.ts` (31 tests) covers:
+
+1. **PDF canonical example** — strict `toBe(327.60)` equality (not `toBeCloseTo`)
+2. **Base premium isolation** — each tier with all multipliers at 1.0
+3. **Single-multiplier isolation** — each factor tested independently
+4. **Combined multipliers** — pairwise and all-four-factors combinations across all tiers
+5. **Age boundary conditions** — ages 0, 64, 65 (excluded), 66 (first senior), 100
+6. **Floating-point precision** — `Math.round(raw * 100) / 100` prevents drift like `327.5999...`
+7. **Result shape contract** — returned object always has all expected keys
+8. **Input validation/guards** — `RangeError` on negative age, `TypeError` on unknown tier
+
+```bash
+# Run the full suite
+npm test
+
+# With coverage (src/utils/ only)
+npm run test:coverage
+```
+
+---
+
 ## Phase Roadmap
 
 | Phase | Title | Status |
 |-------|-------|--------|
 | **1** | Scaffolding, Tooling & Base Configuration | ✅ Complete |
-| **2** | MUI Theme & Global Layout | 🔜 Planned |
-| **3** | Quote Context & React Router Wizard | 🔜 Planned |
-| **4** | Form Steps with RHF + Yup Validation | 🔜 Planned |
-| **5** | Quote Summary & Premium Calculation | 🔜 Planned |
-| **6** | Polish, Animations & Final QA | 🔜 Planned |
+| **2** | Core Business Logic & Unit Testing | ✅ Complete |
+| **3** | MUI Theme & Global Layout | 🔜 Planned |
+| **4** | Quote Context & React Router Wizard | 🔜 Planned |
+| **5** | Form Steps with RHF + Yup Validation | 🔜 Planned |
+| **6** | Quote Summary, Polish & Final QA | 🔜 Planned |
 
 ---
 
