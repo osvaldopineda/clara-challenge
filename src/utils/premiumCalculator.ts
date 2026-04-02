@@ -69,8 +69,18 @@ export interface PremiumInput {
   coverageTier: CoverageTier
 
   /**
-   * True if the applicant has any pre-existing condition
-   * (Diabetes, Heart Disease, Hypertension, Cancer, or Other).
+   * True if the applicant has **any** pre-existing condition.
+   *
+   * Full condition list per PDF (all 5):
+   *  - Diabetes
+   *  - Heart Disease   ← included (previously omitted in first pass)
+   *  - Hypertension
+   *  - Cancer (history)
+   *  - Other
+   *
+   * In the UI this is derived from `CoverageStep.preExistingConditions`:
+   * `hasPreExistingConditions = preExistingConditions.length > 0`
+   *
    * Triggers the 1.3× conditions multiplier.
    */
   hasPreExistingConditions: boolean
