@@ -60,8 +60,8 @@ export interface PersonalInfoStep {
   firstName: string
   lastName: string
   email: string
-  /** ISO date string (YYYY-MM-DD). Used to derive age for multiplier logic. */
-  dateOfBirth: string
+  /** Applicant's age in years. Must be a positive number. */
+  age: number
   zipCode: string
 }
 

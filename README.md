@@ -256,7 +256,7 @@ npm run test:coverage
 | **2** | Core Business Logic & Unit Testing | ✅ Complete |
 | **3** | MUI Theme & Global Layout | ✅ Complete |
 | **4** | Quote Context & React Router Wizard | ✅ Complete |
-| **5** | Form Steps with RHF + Yup Validation | 🔜 Planned |
+| **5** | Form Steps with RHF + Yup Validation | ✅ Complete |
 | **6** | Quote Summary, Polish & Final QA | 🔜 Planned |
 
 ---

@@ -86,22 +86,7 @@ export type QuoteAction =
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
-/**
- * Derives the applicant's age in whole years from an ISO date string.
- * Returns 0 when the date is missing or invalid.
- */
-function deriveAge(dateOfBirth: string): number {
-  if (!dateOfBirth) return 0
-  const dob = new Date(dateOfBirth)
-  if (isNaN(dob.getTime())) return 0
-  const today = new Date()
-  let age = today.getFullYear() - dob.getFullYear()
-  const hasHadBirthdayThisYear =
-    today.getMonth() > dob.getMonth() ||
-    (today.getMonth() === dob.getMonth() && today.getDate() >= dob.getDate())
-  if (!hasHadBirthdayThisYear) age -= 1
-  return Math.max(0, age)
-}
+ 
 
 /**
  * Computes the premium from state slices, or returns null if data is incomplete.
@@ -110,7 +95,7 @@ function computePremium(state: QuoteState): PremiumResult | null {
   const { personalInfo, coverage } = state
   if (!personalInfo || !coverage) return null
 
-  const age = deriveAge(personalInfo.dateOfBirth)
+  const { age } = personalInfo
   const hasPreExistingConditions = coverage.preExistingConditions.length > 0
 
   return calculatePremium({
