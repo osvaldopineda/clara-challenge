@@ -11,12 +11,12 @@ import type { QuoteState } from '../context/QuoteContext'
  * @param data The complete form state.
  * @returns A promise that resolves in 2 seconds, with a 90% success rate.
  */
-export async function submitQuote(
-  data: QuoteState,
-): Promise<{ success: boolean; message: string }> {
+export async function submitQuote(data: QuoteState): Promise<{ success: boolean; message: string }> {
+  // Use data silently or ignore it
   console.debug('Submitting quote with data:', data)
   return new Promise((resolve, reject) => {
     setTimeout(() => {
+      // 90% success rate
       if (Math.random() > 0.1) {
         resolve({
           success: true,

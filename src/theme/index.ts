@@ -24,6 +24,7 @@
 import { createTheme } from '@mui/material/styles'
 import type { ThemeOptions } from '@mui/material/styles'
 
+// ─── Design Tokens ────────────────────────────────────────────────────────────
 
 const CLARA_NAVY = '#1B3A6B'
 const CLARA_NAVY_LIGHT = '#2A5298'
@@ -36,6 +37,7 @@ const CLARA_TEAL_DARK = '#006978'
 const SURFACE_BG = '#F5F7FA'
 const PAPER_BG = '#FFFFFF'
 
+// ─── Theme Definition ─────────────────────────────────────────────────────────
 
 const themeOptions: ThemeOptions = {
   palette: {
@@ -160,10 +162,12 @@ const themeOptions: ThemeOptions = {
     '0px 10px 15px rgba(0,0,0,0.06), 0px 4px 6px rgba(0,0,0,0.04)',
     '0px 20px 25px rgba(0,0,0,0.08), 0px 10px 10px rgba(0,0,0,0.04)',
     '0px 25px 50px rgba(0,0,0,0.12)',
+    // MUI requires 25 shadow values — fill remaining with the deepest
     ...Array<string>(19).fill('0px 25px 50px rgba(0,0,0,0.12)'),
   ] as ThemeOptions['shadows'],
 
   components: {
+    // ── MuiCssBaseline ──────────────────────────────────────────────────────
     MuiCssBaseline: {
       styleOverrides: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
@@ -184,6 +188,7 @@ const themeOptions: ThemeOptions = {
       `,
     },
 
+    // ── MuiButton ───────────────────────────────────────────────────────────
     MuiButton: {
       defaultProps: {
         disableElevation: true,
@@ -202,6 +207,11 @@ const themeOptions: ThemeOptions = {
         containedPrimary: {
           '&:hover': {
             backgroundColor: CLARA_NAVY_LIGHT,
+            transform: 'translateY(-1px)',
+            boxShadow: '0px 4px 12px rgba(27, 58, 107, 0.35)',
+          },
+          '&:active': {
+            transform: 'translateY(0)',
           },
         },
         outlinedPrimary: {
@@ -213,6 +223,7 @@ const themeOptions: ThemeOptions = {
       },
     },
 
+    // ── MuiPaper ───────────────────────────────────────────────────────────
     MuiPaper: {
       defaultProps: { elevation: 0 },
       styleOverrides: {
@@ -223,6 +234,7 @@ const themeOptions: ThemeOptions = {
       },
     },
 
+    // ── MuiCard ────────────────────────────────────────────────────────────
     MuiCard: {
       styleOverrides: {
         root: {
@@ -232,6 +244,7 @@ const themeOptions: ThemeOptions = {
       },
     },
 
+    // ── MuiTextField ────────────────────────────────────────────────────────
     MuiTextField: {
       defaultProps: {
         variant: 'outlined',
@@ -240,6 +253,7 @@ const themeOptions: ThemeOptions = {
       },
     },
 
+    // ── MuiInputBase ─────────────────────────────────────────────────────
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
@@ -258,12 +272,14 @@ const themeOptions: ThemeOptions = {
       },
     },
 
+    // ── MuiStepIcon ─────────────────────────────────────────────────────────
     MuiStepIcon: {
       styleOverrides: {
         root: {
           color: '#CBD5E0',
           '&.Mui-active': {
             color: CLARA_NAVY,
+            filter: 'drop-shadow(0 0 6px rgba(27, 58, 107, 0.45))',
           },
           '&.Mui-completed': {
             color: CLARA_TEAL,
@@ -276,6 +292,7 @@ const themeOptions: ThemeOptions = {
       },
     },
 
+    // ── MuiStepLabel ────────────────────────────────────────────────────────
     MuiStepLabel: {
       styleOverrides: {
         label: {
@@ -292,6 +309,7 @@ const themeOptions: ThemeOptions = {
       },
     },
 
+    // ── MuiStepConnector ─────────────────────────────────────────────────
     MuiStepConnector: {
       styleOverrides: {
         line: {
@@ -301,6 +319,7 @@ const themeOptions: ThemeOptions = {
       },
     },
 
+    // ── MuiChip ──────────────────────────────────────────────────────────
     MuiChip: {
       styleOverrides: {
         root: {
@@ -310,6 +329,7 @@ const themeOptions: ThemeOptions = {
       },
     },
 
+    // ── MuiLinearProgress ─────────────────────────────────────────────────
     MuiLinearProgress: {
       styleOverrides: {
         root: {
