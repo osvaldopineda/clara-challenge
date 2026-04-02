@@ -17,13 +17,10 @@
  */
 
 import { BrowserRouter, Routes, Route, Navigate, Outlet } from 'react-router-dom'
-import AppLayout from './components/layout/AppLayout'
+import { AppLayout } from './components/layout'
 import { StepPersonalInfo, StepCoverage, StepSummary } from './pages'
 import { ROUTES } from './utils/routes'
 
-// ─── Layout Wrapper ───────────────────────────────────────────────────────────
-// Renders AppLayout (header + stepper + container) and lets React Router
-// inject the matched child page via <Outlet />.
 
 function QuoteLayout() {
   return (
@@ -33,7 +30,6 @@ function QuoteLayout() {
   )
 }
 
-// ─── Router ───────────────────────────────────────────────────────────────────
 
 export default function App() {
   return (

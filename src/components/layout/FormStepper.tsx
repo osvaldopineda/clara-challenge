@@ -18,9 +18,8 @@ import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
 import { useLocation } from 'react-router-dom'
-import { STEP_ROUTES } from '../../utils/routes'
+import { STEP_ROUTES } from '../../utils'
 
-// ─── Active Step Derivation ───────────────────────────────────────────────────
 
 /**
  * Maps the current pathname to a zero-based step index.
@@ -33,7 +32,6 @@ function useActiveStep(): number {
   return index >= 0 ? index : 0
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function FormStepper() {
   const theme = useTheme()
@@ -65,8 +63,7 @@ export default function FormStepper() {
             letterSpacing: '0.08em',
           }}
         >
-          Step {activeStep + 1} of {STEP_ROUTES.length} &mdash;{' '}
-          {STEP_ROUTES[activeStep]?.label}
+          Step {activeStep + 1} of {STEP_ROUTES.length} &mdash; {STEP_ROUTES[activeStep]?.label}
         </Typography>
       )}
 
