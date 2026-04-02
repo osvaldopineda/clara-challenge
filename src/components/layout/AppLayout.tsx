@@ -29,7 +29,6 @@ import Tooltip from '@mui/material/Tooltip'
 import Chip from '@mui/material/Chip'
 import FormStepper from './FormStepper'
 
-// ─── Clara Logo Mark ──────────────────────────────────────────────────────────
 
 function ClaraLogo() {
   return (
@@ -84,13 +83,11 @@ function ClaraLogo() {
   )
 }
 
-// ─── Component Props ──────────────────────────────────────────────────────────
 
 interface AppLayoutProps {
   children: ReactNode
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AppLayout({ children }: AppLayoutProps) {
   return (
@@ -102,12 +99,11 @@ export default function AppLayout({ children }: AppLayoutProps) {
         backgroundColor: 'background.default',
       }}
     >
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
       <AppBar
         position="sticky"
         elevation={0}
         sx={{
-          background: 'linear-gradient(135deg, #112447 0%, #1B3A6B 60%, #2A5298 100%)',
+          backgroundColor: 'primary.main',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
           backdropFilter: 'blur(8px)',
         }}
@@ -193,7 +189,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <Container
           maxWidth="md"
           sx={{
-            // Vertical centering feel — nudge content up slightly
             display: 'flex',
             flexDirection: 'column',
             gap: 3,

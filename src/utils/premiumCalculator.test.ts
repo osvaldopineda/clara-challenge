@@ -22,7 +22,6 @@ import {
 } from './premiumCalculator'
 import type { PremiumInput } from './premiumCalculator'
 
-// ─── Helpers ──────────────────────────────────────────────────────────────────
 
 /** A baseline "clean" applicant — no risk factors, young, basic tier. */
 const baseInput: PremiumInput = {
@@ -33,17 +32,9 @@ const baseInput: PremiumInput = {
   includesSpouse: false,
 }
 
-// ─── 1. PDF Canonical Example (Source of Truth) ───────────────────────────────
 
 describe('PDF canonical example', () => {
   it('produces exactly $327.60 for the reference scenario', () => {
-    // From the Clara ONB Frontend Challenge PDF:
-    //   Age: 70 (> 65 → × 1.5)
-    //   Tier: Standard ($100 base)
-    //   Pre-existing condition: yes (× 1.3)
-    //   Tobacco use: yes (× 1.2)
-    //   Spouse coverage: yes (× 1.4)
-    //   Formula: $100 × 1.5 × 1.3 × 1.2 × 1.4 = $327.60
     const result = calculatePremium({
       age: 70,
       coverageTier: 'standard',
@@ -52,7 +43,7 @@ describe('PDF canonical example', () => {
       includesSpouse: true,
     })
 
-    expect(result.monthlyPremium).toBe(327.60)
+    expect(result.monthlyPremium).toBe(327.6)
     expect(result.basePremium).toBe(BASE_PREMIUMS.standard)
     expect(result.appliedMultipliers.age).toBe(MULTIPLIERS.senior)
     expect(result.appliedMultipliers.conditions).toBe(MULTIPLIERS.conditions)
@@ -61,7 +52,6 @@ describe('PDF canonical example', () => {
   })
 })
 
-// ─── 2. Base Premiums (No Risk Factors) ──────────────────────────────────────
 
 describe('base premiums — no multipliers applied', () => {
   it('returns $50 for basic tier, young applicant, no risk factors', () => {
@@ -83,7 +73,6 @@ describe('base premiums — no multipliers applied', () => {
   })
 })
 
-// ─── 3. Single Multiplier Isolation ──────────────────────────────────────────
 
 describe('age multiplier', () => {
   it('does NOT apply the senior multiplier at exactly age 65 (boundary — not > 65)', () => {
@@ -150,11 +139,9 @@ describe('spouse coverage multiplier', () => {
   })
 })
 
-// ─── 4. Combined Multipliers ──────────────────────────────────────────────────
 
 describe('combined multipliers', () => {
   it('compounds senior + conditions correctly (basic tier)', () => {
-    // $50 × 1.5 × 1.3 = $97.50
     const result = calculatePremium({
       ...baseInput,
       age: 70,
@@ -164,7 +151,6 @@ describe('combined multipliers', () => {
   })
 
   it('compounds senior + tobacco correctly (standard tier)', () => {
-    // $100 × 1.5 × 1.2 = $180.00
     const result = calculatePremium({
       ...baseInput,
       coverageTier: 'standard',
@@ -175,7 +161,6 @@ describe('combined multipliers', () => {
   })
 
   it('compounds senior + spouse correctly (premium tier)', () => {
-    // $200 × 1.5 × 1.4 = $420.00
     const result = calculatePremium({
       ...baseInput,
       coverageTier: 'premium',
@@ -186,7 +171,6 @@ describe('combined multipliers', () => {
   })
 
   it('compounds conditions + tobacco + spouse (no senior) correctly', () => {
-    // $100 × 1.0 × 1.3 × 1.2 × 1.4 = $218.40
     const result = calculatePremium({
       ...baseInput,
       coverageTier: 'standard',
@@ -199,7 +183,6 @@ describe('combined multipliers', () => {
   })
 
   it('applies ALL four multipliers on basic tier correctly', () => {
-    // $50 × 1.5 × 1.3 × 1.2 × 1.4 = $163.80
     const result = calculatePremium({
       age: 70,
       coverageTier: 'basic',
@@ -211,7 +194,6 @@ describe('combined multipliers', () => {
   })
 
   it('applies ALL four multipliers on premium tier correctly', () => {
-    // $200 × 1.5 × 1.3 × 1.2 × 1.4 = $655.20
     const result = calculatePremium({
       age: 70,
       coverageTier: 'premium',
@@ -223,13 +205,12 @@ describe('combined multipliers', () => {
   })
 })
 
-// ─── 5. Age Boundary Conditions ──────────────────────────────────────────────
 
 describe('age boundary conditions', () => {
   const adjacentAges = [
     { age: 64, expectSenior: false },
     { age: 65, expectSenior: false }, // boundary — NOT > 65, so no multiplier
-    { age: 66, expectSenior: true  }, // first age that triggers the multiplier
+    { age: 66, expectSenior: true }, // first age that triggers the multiplier
     { age: 100, expectSenior: true },
   ]
 
@@ -242,14 +223,31 @@ describe('age boundary conditions', () => {
   })
 })
 
-// ─── 6. Floating-Point Precision ─────────────────────────────────────────────
 
 describe('floating-point precision', () => {
   it('always returns a value with at most 2 decimal places', () => {
     const inputs: PremiumInput[] = [
-      { age: 70, coverageTier: 'standard', hasPreExistingConditions: true, usesTobacco: true, includesSpouse: true },
-      { age: 30, coverageTier: 'basic', hasPreExistingConditions: true, usesTobacco: false, includesSpouse: false },
-      { age: 70, coverageTier: 'basic', hasPreExistingConditions: true, usesTobacco: true, includesSpouse: true },
+      {
+        age: 70,
+        coverageTier: 'standard',
+        hasPreExistingConditions: true,
+        usesTobacco: true,
+        includesSpouse: true,
+      },
+      {
+        age: 30,
+        coverageTier: 'basic',
+        hasPreExistingConditions: true,
+        usesTobacco: false,
+        includesSpouse: false,
+      },
+      {
+        age: 70,
+        coverageTier: 'basic',
+        hasPreExistingConditions: true,
+        usesTobacco: true,
+        includesSpouse: true,
+      },
     ]
 
     inputs.forEach((input) => {
@@ -267,14 +265,11 @@ describe('floating-point precision', () => {
       usesTobacco: true,
       includesSpouse: true,
     })
-    // Strict equality — not toBeCloseTo — because the spec demands exactness
-    expect(monthlyPremium).toBe(327.60)
-    // Also verify it's a proper IEEE 754 double, not a string-coerced value
+    expect(monthlyPremium).toBe(327.6)
     expect(typeof monthlyPremium).toBe('number')
   })
 })
 
-// ─── 7. Result Shape ─────────────────────────────────────────────────────────
 
 describe('result shape', () => {
   it('always returns monthlyPremium, basePremium, and appliedMultipliers', () => {
@@ -297,24 +292,18 @@ describe('result shape', () => {
   })
 })
 
-// ─── 8. Input Validation ─────────────────────────────────────────────────────
 
 describe('input validation', () => {
   it('throws RangeError for negative age', () => {
-    expect(() =>
-      calculatePremium({ ...baseInput, age: -1 }),
-    ).toThrow(RangeError)
+    expect(() => calculatePremium({ ...baseInput, age: -1 })).toThrow(RangeError)
   })
 
   it('throws RangeError for age -100', () => {
-    expect(() =>
-      calculatePremium({ ...baseInput, age: -100 }),
-    ).toThrow(/non-negative/)
+    expect(() => calculatePremium({ ...baseInput, age: -100 })).toThrow(/non-negative/)
   })
 
   it('throws TypeError for an unrecognised coverage tier', () => {
     expect(() =>
-      // @ts-expect-error — intentionally passing invalid tier to test runtime guard
       calculatePremium({ ...baseInput, coverageTier: 'ultra' }),
     ).toThrow(TypeError)
   })

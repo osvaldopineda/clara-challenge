@@ -17,18 +17,15 @@ import { useNavigate } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
-import { useQuoteContext } from '../context/QuoteContext'
-import { ROUTES } from '../utils/routes'
-import type { PersonalInfoStep } from '../types/quote.types'
+import { useQuoteContext } from '../context'
+import { ROUTES } from '../utils'
+import type { PersonalInfoStep } from '../types'
 
 const schema = yup
   .object({
     firstName: yup.string().required('First name is required'),
     lastName: yup.string().required('Last name is required'),
-    email: yup
-      .string()
-      .email('Invalid email address')
-      .required('Email is required'),
+    email: yup.string().email('Invalid email address').required('Email is required'),
     age: yup
       .number()
       .transform((value) => (isNaN(value) ? undefined : value))
@@ -56,7 +53,7 @@ export default function StepPersonalInfo() {
       firstName: '',
       lastName: '',
       email: '',
-      age: '' as unknown as number, // allows placeholder empty state
+      age: '' as unknown as number,
       zipCode: '',
     },
   })
@@ -68,8 +65,7 @@ export default function StepPersonalInfo() {
 
   return (
     <Card sx={{ borderRadius: 3, overflow: 'hidden' }}>
-      {/* Colour band */}
-      <Box sx={{ height: 6, background: 'linear-gradient(90deg, #1B3A6B 0%, #2A5298 100%)' }} />
+      <Box sx={{ height: 6, backgroundColor: 'primary.main' }} />
 
       <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
@@ -80,8 +76,8 @@ export default function StepPersonalInfo() {
         </Box>
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          We need a few details to generate your personalised quote. All information is
-          kept strictly confidential.
+          We need a few details to generate your personalised quote. All information is kept
+          strictly confidential.
         </Typography>
 
         <Divider sx={{ mb: 3 }} />
@@ -172,12 +168,7 @@ export default function StepPersonalInfo() {
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              type="submit"
-              id="btn-step1-next"
-              variant="contained"
-              size="large"
-            >
+            <Button type="submit" id="btn-step1-next" variant="contained" size="large">
               Next: Coverage →
             </Button>
           </Box>

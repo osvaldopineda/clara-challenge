@@ -10,7 +10,6 @@
  * type-safe, tree-shakeable, and work seamlessly with verbatimModuleSyntax.
  */
 
-// ─── Value Maps (replaces enum) ───────────────────────────────────────────────
 
 export const CoverageType = {
   Basic: 'basic',
@@ -46,14 +45,6 @@ export const PreExistingCondition = {
 
 export type PreExistingCondition = (typeof PreExistingCondition)[keyof typeof PreExistingCondition]
 
-// ─── Step Data Shapes ─────────────────────────────────────────────────────────
-//
-// The quote wizard is exactly 3 steps:
-//   Step 1 — Personal Information
-//   Step 2 — Coverage Selection  ← Additional health questions are conditionally
-//                                   rendered INSIDE this step when age > 65.
-//                                   They are NOT a separate Step 3/4.
-//   Step 3 — Review & Confirmation
 
 /** Step 1: basic applicant details. */
 export interface PersonalInfoStep {
@@ -75,7 +66,6 @@ export interface PersonalInfoStep {
 export interface CoverageStep {
   coverageType: CoverageType
 
-  // ── Conditional additional questions (age > 65) ──────────────────────────
   /** Selected pre-existing conditions from the full PDF list. Empty array = none. */
   preExistingConditions: PreExistingCondition[]
   /** True if the applicant takes prescription medication. */
@@ -91,7 +81,6 @@ export interface SummaryStep {
   acceptedTerms: boolean
 }
 
-// ─── Aggregated Quote Form Data ───────────────────────────────────────────────
 
 export interface QuoteFormData {
   personalInfo: PersonalInfoStep
@@ -99,7 +88,6 @@ export interface QuoteFormData {
   summary: SummaryStep
 }
 
-// ─── UI / Navigation ──────────────────────────────────────────────────────────
 
 export interface QuoteStep {
   id: string
