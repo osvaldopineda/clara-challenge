@@ -254,10 +254,39 @@ npm run test:coverage
 |-------|-------|--------|
 | **1** | Scaffolding, Tooling & Base Configuration | ✅ Complete |
 | **2** | Core Business Logic & Unit Testing | ✅ Complete |
-| **3** | MUI Theme & Global Layout | 🔜 Planned |
+| **3** | MUI Theme & Global Layout | ✅ Complete |
 | **4** | Quote Context & React Router Wizard | 🔜 Planned |
 | **5** | Form Steps with RHF + Yup Validation | 🔜 Planned |
 | **6** | Quote Summary, Polish & Final QA | 🔜 Planned |
+
+---
+
+## Theme Configuration
+
+The Clara MUI theme lives in `src/theme/index.ts` and is injected via `ThemeProvider` in `src/main.tsx`.
+
+### Color Palette
+
+| Token | Value | Use |
+|-------|-------|-----|
+| Primary — Clara Navy | `#1B3A6B` | Header, active step, primary CTAs |
+| Primary Light | `#2A5298` | Hover states |
+| Secondary — Warm Teal | `#0097A7` | Completed steps, success accents |
+| Background Default | `#F5F7FA` | Page surface |
+| Background Paper | `#FFFFFF` | Cards, inputs |
+
+### Typography
+
+**Inter** (Google Fonts) is loaded via a `MuiCssBaseline` global `@import`. It was chosen for its exceptional screen legibility at form-field sizes and its neutral, professional character — widely used in fintech products.
+
+### Key Component Overrides
+
+| Component | Override |
+|-----------|----------|
+| `MuiButton` | `borderRadius: 8`, lift animation on hover, `textTransform: none` |
+| `MuiOutlinedInput` | White background, navy border on focus |
+| `MuiStepIcon` | Active = navy with glow, Completed = teal |
+| `MuiPaper` | `elevation: 0`, replaced with `border: 1px solid #E2E8F0` |
 
 ---
 

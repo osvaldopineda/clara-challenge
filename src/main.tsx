@@ -1,10 +1,32 @@
+/**
+ * @file src/main.tsx
+ * @description Application entry point.
+ *
+ * Provider stack (outer → inner):
+ *   StrictMode            — Catches unsafe lifecycle patterns in dev
+ *   ThemeProvider         — Injects Clara's custom MUI theme
+ *   CssBaseline           — Normalises browser defaults (margin, box-sizing, etc.)
+ *   App                   — Root component / router
+ */
+
 import { StrictMode } from 'react'
 import { createRoot } from 'react-dom/client'
-import './index.css'
-import App from './App.tsx'
+import { ThemeProvider } from '@mui/material/styles'
+import CssBaseline from '@mui/material/CssBaseline'
+import claraTheme from './theme'
+import App from './App'
 
-createRoot(document.getElementById('root')!).render(
+const rootElement = document.getElementById('root')
+
+if (!rootElement) {
+  throw new Error('[main.tsx] Cannot find #root element — check index.html.')
+}
+
+createRoot(rootElement).render(
   <StrictMode>
-    <App />
+    <ThemeProvider theme={claraTheme}>
+      <CssBaseline />
+      <App />
+    </ThemeProvider>
   </StrictMode>,
 )
