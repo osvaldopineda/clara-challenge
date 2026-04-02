@@ -255,7 +255,7 @@ npm run test:coverage
 | **1** | Scaffolding, Tooling & Base Configuration | ✅ Complete |
 | **2** | Core Business Logic & Unit Testing | ✅ Complete |
 | **3** | MUI Theme & Global Layout | ✅ Complete |
-| **4** | Quote Context & React Router Wizard | 🔜 Planned |
+| **4** | Quote Context & React Router Wizard | ✅ Complete |
 | **5** | Form Steps with RHF + Yup Validation | 🔜 Planned |
 | **6** | Quote Summary, Polish & Final QA | 🔜 Planned |
 
@@ -287,6 +287,55 @@ The Clara MUI theme lives in `src/theme/index.ts` and is injected via `ThemeProv
 | `MuiOutlinedInput` | White background, navy border on focus |
 | `MuiStepIcon` | Active = navy with glow, Completed = teal |
 | `MuiPaper` | `elevation: 0`, replaced with `border: 1px solid #E2E8F0` |
+
+---
+
+## Context & Routing Architecture
+
+### Global State (QuoteContext)
+
+`src/context/QuoteContext.tsx` manages the complete wizard state using `useReducer`, giving predictable state transitions without Redux overhead.
+
+```
+action → reducer → new state → useEffect → localStorage
+                            ↘ re-render
+```
+
+**State shape:**
+
+| Slice | Stored in localStorage? | Notes |
+|-------|------------------------|-------|
+| `personalInfo` | ✅ Yes | Hydrated on mount |
+| `coverage` | ✅ Yes | Hydrated on mount |
+| `premium` | ❌ No | Always recomputed from source data |
+
+**Design decisions:**
+- The premium is excluded from storage because it is a **pure derivation** — storing it would risk stale values if the multiplier constants ever change.
+- On `RESET`, both state and `localStorage` are cleared atomically.
+- The `readFromStorage` / `writeToStorage` helpers are wrapped in `try/catch` to handle private-browsing mode and storage quota errors gracefully.
+
+### localStorage Persistence
+
+Key: `clara_quote_draft`  
+Format: `{ personalInfo: {...} | null, coverage: {...} | null }`
+
+The draft is synced on every state change via `useEffect([state])`. If the user refreshes mid-form, their progress is restored automatically.
+
+### React Router Setup
+
+| URL | Component | Notes |
+|-----|-----------|-------|
+| `/` | — | Redirects to `/quote/personal-info` |
+| `/quote/personal-info` | `StepPersonalInfo` | Step 1 |
+| `/quote/coverage` | `StepCoverage` | Step 2 (+ conditional health Qs) |
+| `/quote/summary` | `StepSummary` | Step 3 |
+| `*` (any other) | — | Redirects to Step 1 |
+
+All step routes share the `QuoteLayout` component which renders `AppLayout` with `<Outlet />`. This keeps the header and stepper mounted across step navigations (no remounting).
+
+### FormStepper → useLocation
+
+The stepper derives `activeStep` from `useLocation().pathname` via `STEP_ROUTES.findIndex()`. No prop drilling, no context subscription — the URL is the single source of truth for navigation state.
 
 ---
 

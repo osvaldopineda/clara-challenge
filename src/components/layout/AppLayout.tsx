@@ -15,8 +15,8 @@
  *   │  </main>                                 │
  *   └─────────────────────────────────────────┘
  *
- * The layout accepts an optional `activeStep` prop so it can be controlled
- * by the router / context in Phase 4 without any structural change.
+ * The layout no longer needs an activeStep prop — FormStepper now derives
+ * the active step from useLocation (React Router) directly.
  */
 
 import type { ReactNode } from 'react'
@@ -88,13 +88,11 @@ function ClaraLogo() {
 
 interface AppLayoutProps {
   children: ReactNode
-  /** Forwarded to FormStepper — Phase 4 will drive this from context. */
-  activeStep?: number
 }
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-export default function AppLayout({ children, activeStep = 0 }: AppLayoutProps) {
+export default function AppLayout({ children }: AppLayoutProps) {
   return (
     <Box
       sx={{
@@ -181,7 +179,7 @@ export default function AppLayout({ children, activeStep = 0 }: AppLayoutProps) 
       </AppBar>
 
       {/* ── Step Progress ───────────────────────────────────────────────────── */}
-      <FormStepper activeStep={activeStep} />
+      <FormStepper />
 
       {/* ── Main Content ────────────────────────────────────────────────────── */}
       <Box

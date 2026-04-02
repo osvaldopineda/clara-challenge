@@ -2,11 +2,12 @@
  * @file src/components/layout/FormStepper.tsx
  * @description MUI Stepper that visualises the 3-step quote wizard progress.
  *
- * Phase 4 will connect `activeStep` to React Router + Context.
- * For now it is received as a prop, defaulting to 0 (Step 1 active).
+ * Phase 4 update: `activeStep` is now derived from the current URL using
+ * `useLocation` (react-router-dom) rather than received as a prop.
+ * This makes the stepper self-contained and always in sync with the router.
  *
- * Step definitions are co-located here so the stepper is self-contained;
- * they will be centralised in a shared constant once routing is added.
+ * Step definitions are imported from the shared STEP_ROUTES constant so
+ * the route ↔ step mapping lives in exactly one place.
  */
 
 import Box from '@mui/material/Box'
@@ -16,42 +17,28 @@ import StepLabel from '@mui/material/StepLabel'
 import Typography from '@mui/material/Typography'
 import { useTheme } from '@mui/material/styles'
 import useMediaQuery from '@mui/material/useMediaQuery'
+import { useLocation } from 'react-router-dom'
+import { STEP_ROUTES } from '../../utils/routes'
 
-// ─── Step Definitions ─────────────────────────────────────────────────────────
+// ─── Active Step Derivation ───────────────────────────────────────────────────
 
-interface StepDefinition {
-  label: string
-  description: string
+/**
+ * Maps the current pathname to a zero-based step index.
+ * Returns 0 (first step) for any unrecognised path so the stepper
+ * never shows an invalid state during redirect transitions.
+ */
+function useActiveStep(): number {
+  const { pathname } = useLocation()
+  const index = STEP_ROUTES.findIndex((s) => s.path === pathname)
+  return index >= 0 ? index : 0
 }
-
-const QUOTE_STEPS: StepDefinition[] = [
-  {
-    label: 'Personal Info',
-    description: 'Tell us about yourself',
-  },
-  {
-    label: 'Coverage',
-    description: 'Choose your plan',
-  },
-  {
-    label: 'Review',
-    description: 'Confirm & submit',
-  },
-]
 
 // ─── Component ────────────────────────────────────────────────────────────────
 
-interface FormStepperProps {
-  /**
-   * Zero-indexed active step (0 = Personal Info, 1 = Coverage, 2 = Review).
-   * Defaults to 0 — will be driven by context in Phase 4.
-   */
-  activeStep?: number
-}
-
-export default function FormStepper({ activeStep = 0 }: FormStepperProps) {
+export default function FormStepper() {
   const theme = useTheme()
   const isMobile = useMediaQuery(theme.breakpoints.down('sm'))
+  const activeStep = useActiveStep()
 
   return (
     <Box
@@ -78,8 +65,8 @@ export default function FormStepper({ activeStep = 0 }: FormStepperProps) {
             letterSpacing: '0.08em',
           }}
         >
-          Step {activeStep + 1} of {QUOTE_STEPS.length} &mdash;{' '}
-          {QUOTE_STEPS[activeStep]?.label}
+          Step {activeStep + 1} of {STEP_ROUTES.length} &mdash;{' '}
+          {STEP_ROUTES[activeStep]?.label}
         </Typography>
       )}
 
@@ -92,8 +79,8 @@ export default function FormStepper({ activeStep = 0 }: FormStepperProps) {
           },
         }}
       >
-        {QUOTE_STEPS.map((step, index) => (
-          <Step key={step.label} completed={index < activeStep}>
+        {STEP_ROUTES.map((step, index) => (
+          <Step key={step.path} completed={index < activeStep}>
             <StepLabel
               optional={
                 !isMobile && (
