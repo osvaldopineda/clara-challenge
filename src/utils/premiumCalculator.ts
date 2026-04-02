@@ -23,6 +23,7 @@
  *   and completely decoupled from rendering concerns.
  */
 
+// ─── Constants ────────────────────────────────────────────────────────────────
 
 /** Threshold age above which the senior multiplier applies (exclusive). */
 export const SENIOR_AGE_THRESHOLD = 65
@@ -48,6 +49,7 @@ export const MULTIPLIERS = {
   none: 1.0,
 } as const
 
+// ─── Types ────────────────────────────────────────────────────────────────────
 
 /** The valid coverage tiers accepted by the calculator. */
 export type CoverageTier = keyof typeof BASE_PREMIUMS
@@ -113,6 +115,7 @@ export interface PremiumResult {
   }
 }
 
+// ─── Pure Calculation Function ────────────────────────────────────────────────
 
 /**
  * Calculates the estimated monthly insurance premium from the given inputs.
@@ -138,6 +141,7 @@ export interface PremiumResult {
 export function calculatePremium(data: PremiumInput): PremiumResult {
   const { age, coverageTier, hasPreExistingConditions, usesTobacco, includesSpouse } = data
 
+  // ── Input Guards ────────────────────────────────────────────────────────────
   if (age < 0) {
     throw new RangeError(`Age must be a non-negative number, received: ${String(age)}`)
   }
@@ -146,16 +150,21 @@ export function calculatePremium(data: PremiumInput): PremiumResult {
     throw new TypeError(`Unknown coverage tier: "${String(coverageTier)}"`)
   }
 
+  // ── Base Premium ────────────────────────────────────────────────────────────
   const basePremium = BASE_PREMIUMS[coverageTier]
 
+  // ── Multiplier Resolution ───────────────────────────────────────────────────
   const ageMultiplier = age > SENIOR_AGE_THRESHOLD ? MULTIPLIERS.senior : MULTIPLIERS.none
   const conditionsMultiplier = hasPreExistingConditions ? MULTIPLIERS.conditions : MULTIPLIERS.none
   const tobaccoMultiplier = usesTobacco ? MULTIPLIERS.tobacco : MULTIPLIERS.none
   const spouseMultiplier = includesSpouse ? MULTIPLIERS.spouse : MULTIPLIERS.none
 
-  const raw =
-    basePremium * ageMultiplier * conditionsMultiplier * tobaccoMultiplier * spouseMultiplier
+  // ── Formula ─────────────────────────────────────────────────────────────────
+  const raw = basePremium * ageMultiplier * conditionsMultiplier * tobaccoMultiplier * spouseMultiplier
 
+  // ── Rounding ─────────────────────────────────────────────────────────────── 
+  // Use Math.round on the third decimal to avoid floating-point drift,
+  // e.g. 327.5999999... must round correctly to 327.60.
   const monthlyPremium = Math.round(raw * 100) / 100
 
   return {

@@ -23,11 +23,10 @@ import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import Snackbar from '@mui/material/Snackbar'
 import Grid from '@mui/material/Grid'
-import CheckIcon from '@mui/icons-material/Check'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { useQuoteContext } from '../context'
-import { ROUTES } from '../utils'
-import { submitQuote } from '../services'
+import { useQuoteContext } from '../context/QuoteContext'
+import { ROUTES } from '../utils/routes'
+import { submitQuote } from '../services/api'
 
 export default function StepSummary() {
   const navigate = useNavigate()
@@ -35,22 +34,21 @@ export default function StepSummary() {
   const errorRef = useRef<HTMLDivElement>(null)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [snackbar, setSnackbar] = useState<{
-    open: boolean
-    message: string
-    severity: 'success' | 'error'
-  }>({
+  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
     open: false,
     message: '',
     severity: 'success',
   })
 
+  // Compute (or recompute) the premium whenever this page is visited
   useEffect(() => {
+    // Only compute if we have the prerequisites
     if (state.personalInfo && state.coverage) {
       computeAndStorePremium()
     }
   }, [state.personalInfo, state.coverage, computeAndStorePremium])
 
+  // Route Guard: Redirect to Step 1 if directly hitting Step 3 without data
   if (!state.personalInfo || !state.coverage) {
     return <Navigate to={ROUTES.PERSONAL_INFO} replace />
   }
@@ -67,9 +65,12 @@ export default function StepSummary() {
     try {
       const response = await submitQuote(state)
       setSnackbar({ open: true, message: response.message, severity: 'success' })
+      // Typically we'd navigate to a dedicated success/thank you view here.
+      // E.g., setTimeout(() => resetQuote() & navigate('/thank-you'), 2000)
     } catch (error) {
       const err = error as Error
       setSnackbar({ open: true, message: err.message, severity: 'error' })
+      // Focus management for accessibility when an error occurs
       setTimeout(() => {
         errorRef.current?.focus()
       }, 0)
@@ -83,7 +84,7 @@ export default function StepSummary() {
   return (
     <>
       <Card sx={{ borderRadius: 3, overflow: 'hidden' }}>
-        <Box sx={{ height: 6, backgroundColor: 'primary.main' }} />
+        <Box sx={{ height: 6, background: 'linear-gradient(90deg, #1B3A6B 0%, #0097A7 100%)' }} />
 
         <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
@@ -122,11 +123,7 @@ export default function StepSummary() {
                   / month
                 </Typography>
               </Typography>
-              <Typography
-                variant="caption"
-                color="text.secondary"
-                sx={{ mt: 0.5, display: 'block' }}
-              >
+              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
                 Base: ${state.premium.basePremium.toFixed(2)} · Multipliers:{' '}
                 {Object.entries(state.premium.appliedMultipliers)
                   .filter(([, v]) => v > 1)
@@ -140,25 +137,14 @@ export default function StepSummary() {
           <Grid container spacing={3} sx={{ mb: 4 }} aria-labelledby="summary-heading">
             <Grid size={{ xs: 12, md: 6 }}>
               <Paper variant="outlined" sx={{ borderRadius: 2, height: '100%' }}>
-                <Box
-                  sx={{
-                    bgcolor: 'rgba(27, 58, 107, 0.04)',
-                    px: 2,
-                    py: 1.5,
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                  }}
-                >
+                <Box sx={{ bgcolor: 'rgba(27, 58, 107, 0.04)', px: 2, py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
                   <Typography variant="subtitle2" color="primary.main" fontWeight={700}>
                     Personal Information
                   </Typography>
                 </Box>
                 <List dense disablePadding>
                   <ListItem divider>
-                    <ListItemText
-                      primary="Name"
-                      secondary={`${state.personalInfo.firstName} ${state.personalInfo.lastName}`}
-                    />
+                    <ListItemText primary="Name" secondary={`${state.personalInfo.firstName} ${state.personalInfo.lastName}`} />
                   </ListItem>
                   <ListItem divider>
                     <ListItemText primary="Email Address" secondary={state.personalInfo.email} />
@@ -175,56 +161,29 @@ export default function StepSummary() {
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Paper variant="outlined" sx={{ borderRadius: 2, height: '100%' }}>
-                <Box
-                  sx={{
-                    bgcolor: 'rgba(27, 58, 107, 0.04)',
-                    px: 2,
-                    py: 1.5,
-                    borderBottom: '1px solid',
-                    borderColor: 'divider',
-                  }}
-                >
+                <Box sx={{ bgcolor: 'rgba(27, 58, 107, 0.04)', px: 2, py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
                   <Typography variant="subtitle2" color="primary.main" fontWeight={700}>
                     Coverage Details
                   </Typography>
                 </Box>
                 <List dense disablePadding>
                   <ListItem divider>
-                    <ListItemText
-                      primary="Selected Tier"
-                      secondary={
-                        state.coverage.coverageType.charAt(0).toUpperCase() +
-                        state.coverage.coverageType.slice(1)
-                      }
+                    <ListItemText 
+                      primary="Selected Tier" 
+                      secondary={state.coverage.coverageType.charAt(0).toUpperCase() + state.coverage.coverageType.slice(1)} 
                     />
                   </ListItem>
                   <ListItem divider>
-                    <ListItemText
-                      primary="Pre-existing Conditions"
-                      secondary={
-                        state.coverage.preExistingConditions.length > 0
-                          ? state.coverage.preExistingConditions.join(', ')
-                          : 'None'
-                      }
-                    />
+                    <ListItemText primary="Pre-existing Conditions" secondary={state.coverage.preExistingConditions.length > 0 ? state.coverage.preExistingConditions.join(', ') : 'None'} />
                   </ListItem>
                   <ListItem divider>
-                    <ListItemText
-                      primary="Takes Prescription Meds"
-                      secondary={formatYesNo(state.coverage.takesPrescriptionMedication)}
-                    />
+                    <ListItemText primary="Takes Prescription Meds" secondary={formatYesNo(state.coverage.takesPrescriptionMedication)} />
                   </ListItem>
                   <ListItem divider>
-                    <ListItemText
-                      primary="Uses Tobacco"
-                      secondary={formatYesNo(state.coverage.usesTobacco)}
-                    />
+                     <ListItemText primary="Uses Tobacco" secondary={formatYesNo(state.coverage.usesTobacco)} />
                   </ListItem>
                   <ListItem>
-                    <ListItemText
-                      primary="Includes Spouse"
-                      secondary={formatYesNo(state.coverage.includesSpouse)}
-                    />
+                    <ListItemText primary="Includes Spouse" secondary={formatYesNo(state.coverage.includesSpouse)} />
                   </ListItem>
                 </List>
               </Paper>
@@ -237,15 +196,13 @@ export default function StepSummary() {
               id="btn-step3-back"
               variant="outlined"
               size="large"
-              onClick={() => {
-                void navigate(ROUTES.COVERAGE)
-              }}
+              onClick={() => { void navigate(ROUTES.COVERAGE) }}
               disabled={isSubmitting}
               aria-label="Go back to coverage selection"
             >
               ← Back
             </Button>
-
+            
             <Box sx={{ display: 'flex', gap: 2 }}>
               <Button
                 id="btn-step3-restart"
@@ -258,7 +215,7 @@ export default function StepSummary() {
               >
                 Start Over
               </Button>
-
+              
               <Button
                 id="btn-step3-submit"
                 variant="contained"
@@ -266,13 +223,10 @@ export default function StepSummary() {
                 size="large"
                 onClick={handleSubmit}
                 disabled={isSubmitting}
-                aria-label={
-                  isSubmitting ? 'Submitting your quote, please wait' : 'Submit your final quote'
-                }
+                aria-label={isSubmitting ? 'Submitting your quote, please wait' : 'Submit your final quote'}
                 sx={{ minWidth: 160 }}
-                startIcon={isSubmitting ? undefined : <CheckIcon />}
               >
-                {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Submit Quote'}
+                {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Submit Quote ✓'}
               </Button>
             </Box>
           </Box>
@@ -283,28 +237,19 @@ export default function StepSummary() {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => {
-          setSnackbar({ ...snackbar, open: false })
-        }}
+        onClose={() => setSnackbar({ ...snackbar, open: false })}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
-        <Alert
-          onClose={() => {
-            setSnackbar({ ...snackbar, open: false })
-          }}
-          severity={snackbar.severity}
-          variant="filled"
+        <Alert 
+          onClose={() => setSnackbar({ ...snackbar, open: false })} 
+          severity={snackbar.severity} 
+          variant="filled" 
           sx={{ width: '100%', borderRadius: 2 }}
           ref={errorRef}
-          tabIndex={-1}
+          tabIndex={-1} // Makes it focusable programmatically
           action={
             snackbar.severity === 'error' && (
-              <Button
-                color="inherit"
-                size="small"
-                onClick={handleSubmit}
-                aria-label="Retry submitting quote"
-              >
+              <Button color="inherit" size="small" onClick={handleSubmit} aria-label="Retry submitting quote">
                 RETRY
               </Button>
             )

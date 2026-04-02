@@ -20,11 +20,11 @@
 
 ### Prerequisites
 
-| Tool    | Minimum Version |
-| ------- | --------------- |
-| Node.js | `>= 18.x`       |
-| npm     | `>= 9.x`        |
-| Git     | `>= 2.x`        |
+| Tool | Minimum Version |
+|------|----------------|
+| Node.js | `>= 18.x` |
+| npm | `>= 9.x` |
+| Git | `>= 2.x` |
 
 ### Installation
 
@@ -62,18 +62,18 @@ npm run format:check
 
 ## Available Scripts
 
-| Script                  | Description                                     |
-| ----------------------- | ----------------------------------------------- |
-| `npm run dev`           | Start Vite dev server with HMR                  |
-| `npm run build`         | Compile TypeScript + bundle for production      |
-| `npm run preview`       | Preview the production build locally            |
-| `npm run lint`          | Run ESLint across all `.ts` / `.tsx` files      |
-| `npm run lint:fix`      | Run ESLint and auto-fix fixable issues          |
-| `npm run format`        | Format all files with Prettier                  |
-| `npm run format:check`  | Check formatting without writing files (for CI) |
-| `npm test`              | Run Vitest unit tests once (CI mode)            |
-| `npm run test:watch`    | Run Vitest in interactive watch mode            |
-| `npm run test:coverage` | Run tests and generate v8 coverage report       |
+| Script | Description |
+|--------|-------------|
+| `npm run dev` | Start Vite dev server with HMR |
+| `npm run build` | Compile TypeScript + bundle for production |
+| `npm run preview` | Preview the production build locally |
+| `npm run lint` | Run ESLint across all `.ts` / `.tsx` files |
+| `npm run lint:fix` | Run ESLint and auto-fix fixable issues |
+| `npm run format` | Format all files with Prettier |
+| `npm run format:check` | Check formatting without writing files (for CI) |
+| `npm test` | Run Vitest unit tests once (CI mode) |
+| `npm run test:watch` | Run Vitest in interactive watch mode |
+| `npm run test:coverage` | Run tests and generate v8 coverage report |
 
 ---
 
@@ -83,7 +83,7 @@ npm run format:check
 
 **Why Vite over Create React App (CRA)?**
 
-CRA uses Webpack under the hood, which bundles _everything_ before the browser can load a single module. Vite instead leverages **native ES Modules** during development: the browser requests individual files as needed, and Vite only transforms what is actually asked for. This results in:
+CRA uses Webpack under the hood, which bundles *everything* before the browser can load a single module. Vite instead leverages **native ES Modules** during development: the browser requests individual files as needed, and Vite only transforms what is actually asked for. This results in:
 
 - **Sub-second cold starts** regardless of project size.
 - **True Hot Module Replacement (HMR)** that updates only the changed module without re-compiling the entire bundle.
@@ -111,14 +111,14 @@ For a multi-step insurance flow, MUI's `Stepper` component is a perfect semantic
 
 **Why RHF + Yup over Formik or controlled state?**
 
-Multi-step forms with large field counts are where _uncontrolled_ form management shines.
+Multi-step forms with large field counts are where *uncontrolled* form management shines.
 
-| Concern                    | React Hook Form + Yup                                                                                                                                  |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------ |
-| **Re-renders**             | Components do **not** re-render on every keystroke — inputs register themselves via refs.                                                              |
-| **Validation**             | Yup schemas are _schema-first_: a single `object().shape({})` declaration drives both runtime validation and TypeScript inference via `yup.InferType`. |
-| **Multi-step persistence** | `useForm` + `context` allow step-level validation while accumulating data across steps without remounting.                                             |
-| **Resolver bridge**        | `@hookform/resolvers/yup` adapts Yup schemas into RHF's resolver API with one line of code.                                                            |
+| Concern | React Hook Form + Yup |
+|---------|----------------------|
+| **Re-renders** | Components do **not** re-render on every keystroke — inputs register themselves via refs. |
+| **Validation** | Yup schemas are *schema-first*: a single `object().shape({})` declaration drives both runtime validation and TypeScript inference via `yup.InferType`. |
+| **Multi-step persistence** | `useForm` + `context` allow step-level validation while accumulating data across steps without remounting. |
+| **Resolver bridge** | `@hookform/resolvers/yup` adapts Yup schemas into RHF's resolver API with one line of code. |
 
 Compared to Formik, RHF has zero-dependency overhead and benchmarks 10–20x fewer re-renders on complex forms.
 
@@ -184,14 +184,14 @@ src/
 
 ### Why Extract Pure Functions Before Touching React?
 
-The premium calculation is the **core deliverable** of this application. By implementing it as a pure, stateless function _outside of any React component_, we achieve:
+The premium calculation is the **core deliverable** of this application. By implementing it as a pure, stateless function *outside of any React component*, we achieve:
 
-| Principle                  | Rationale                                                                                                                                               |
-| -------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| Principle | Rationale |
+|-----------|----------|
 | **Separation of concerns** | The formula has zero dependency on React, MUI, or any UI library. It can be moved to a backend, a shared package, or a Web Worker without modification. |
-| **Testability**            | A pure function `f(input) → output` requires no DOM, no render cycle, and no mocking. Tests run in milliseconds.                                        |
-| **Determinism**            | Given the same input, the function always returns the same output — no side effects, no shared state.                                                   |
-| **Discoverability**        | Business stakeholders can review `premiumCalculator.ts` in isolation. The math is not buried in a form `onSubmit` handler.                              |
+| **Testability** | A pure function `f(input) → output` requires no DOM, no render cycle, and no mocking. Tests run in milliseconds. |
+| **Determinism** | Given the same input, the function always returns the same output — no side effects, no shared state. |
+| **Discoverability** | Business stakeholders can review `premiumCalculator.ts` in isolation. The math is not buried in a form `onSubmit` handler. |
 
 ### The Formula
 
@@ -203,21 +203,21 @@ monthlyPremium = basePremium × ageMultiplier × conditionsMultiplier × tobacco
 
 #### Base Premiums
 
-| Tier     | Base Monthly Premium |
-| -------- | -------------------- |
-| Basic    | $50                  |
-| Standard | $100                 |
-| Premium  | $200                 |
+| Tier | Base Monthly Premium |
+|------|---------------------|
+| Basic | $50 |
+| Standard | $100 |
+| Premium | $200 |
 
 #### Multipliers
 
-| Factor                  | Condition                | Multiplier |
-| ----------------------- | ------------------------ | ---------- |
-| Age                     | `age > 65`               | `× 1.5`    |
-| Pre-existing conditions | Any condition selected   | `× 1.3`    |
-| Tobacco use             | Uses any tobacco product | `× 1.2`    |
-| Spouse coverage         | Spouse included          | `× 1.4`    |
-| _(no condition)_        | Not applicable           | `× 1.0`    |
+| Factor | Condition | Multiplier |
+|--------|-----------|------------|
+| Age | `age > 65` | `× 1.5` |
+| Pre-existing conditions | Any condition selected | `× 1.3` |
+| Tobacco use | Uses any tobacco product | `× 1.2` |
+| Spouse coverage | Spouse included | `× 1.4` |
+| *(no condition)* | Not applicable | `× 1.0` |
 
 #### Canonical Reference Example (from PDF)
 
@@ -250,14 +250,14 @@ npm run test:coverage
 
 ## Phase Roadmap
 
-| Phase | Title                                     | Status      |
-| ----- | ----------------------------------------- | ----------- |
+| Phase | Title | Status |
+|-------|-------|--------|
 | **1** | Scaffolding, Tooling & Base Configuration | ✅ Complete |
-| **2** | Core Business Logic & Unit Testing        | ✅ Complete |
-| **3** | MUI Theme & Global Layout                 | ✅ Complete |
-| **4** | Quote Context & React Router Wizard       | ✅ Complete |
-| **5** | Form Steps with RHF + Yup Validation      | ✅ Complete |
-| **6** | Quote Summary, Polish & Final QA          | ✅ Complete |
+| **2** | Core Business Logic & Unit Testing | ✅ Complete |
+| **3** | MUI Theme & Global Layout | ✅ Complete |
+| **4** | Quote Context & React Router Wizard | ✅ Complete |
+| **5** | Form Steps with RHF + Yup Validation | ✅ Complete |
+| **6** | Quote Summary, Polish & Final QA | ✅ Complete |
 
 ---
 
@@ -267,13 +267,13 @@ The Clara MUI theme lives in `src/theme/index.ts` and is injected via `ThemeProv
 
 ### Color Palette
 
-| Token                 | Value     | Use                               |
-| --------------------- | --------- | --------------------------------- |
-| Primary — Clara Navy  | `#1B3A6B` | Header, active step, primary CTAs |
-| Primary Light         | `#2A5298` | Hover states                      |
-| Secondary — Warm Teal | `#0097A7` | Completed steps, success accents  |
-| Background Default    | `#F5F7FA` | Page surface                      |
-| Background Paper      | `#FFFFFF` | Cards, inputs                     |
+| Token | Value | Use |
+|-------|-------|-----|
+| Primary — Clara Navy | `#1B3A6B` | Header, active step, primary CTAs |
+| Primary Light | `#2A5298` | Hover states |
+| Secondary — Warm Teal | `#0097A7` | Completed steps, success accents |
+| Background Default | `#F5F7FA` | Page surface |
+| Background Paper | `#FFFFFF` | Cards, inputs |
 
 ### Typography
 
@@ -281,12 +281,12 @@ The Clara MUI theme lives in `src/theme/index.ts` and is injected via `ThemeProv
 
 ### Key Component Overrides
 
-| Component          | Override                                                          |
-| ------------------ | ----------------------------------------------------------------- |
-| `MuiButton`        | `borderRadius: 8`, lift animation on hover, `textTransform: none` |
-| `MuiOutlinedInput` | White background, navy border on focus                            |
-| `MuiStepIcon`      | Active = navy with glow, Completed = teal                         |
-| `MuiPaper`         | `elevation: 0`, replaced with `border: 1px solid #E2E8F0`         |
+| Component | Override |
+|-----------|----------|
+| `MuiButton` | `borderRadius: 8`, lift animation on hover, `textTransform: none` |
+| `MuiOutlinedInput` | White background, navy border on focus |
+| `MuiStepIcon` | Active = navy with glow, Completed = teal |
+| `MuiPaper` | `elevation: 0`, replaced with `border: 1px solid #E2E8F0` |
 
 ---
 
@@ -303,14 +303,13 @@ action → reducer → new state → useEffect → localStorage
 
 **State shape:**
 
-| Slice          | Stored in localStorage? | Notes                              |
-| -------------- | ----------------------- | ---------------------------------- |
-| `personalInfo` | ✅ Yes                  | Hydrated on mount                  |
-| `coverage`     | ✅ Yes                  | Hydrated on mount                  |
-| `premium`      | ❌ No                   | Always recomputed from source data |
+| Slice | Stored in localStorage? | Notes |
+|-------|------------------------|-------|
+| `personalInfo` | ✅ Yes | Hydrated on mount |
+| `coverage` | ✅ Yes | Hydrated on mount |
+| `premium` | ❌ No | Always recomputed from source data |
 
 **Design decisions:**
-
 - The premium is excluded from storage because it is a **pure derivation** — storing it would risk stale values if the multiplier constants ever change.
 - On `RESET`, both state and `localStorage` are cleared atomically.
 - The `readFromStorage` / `writeToStorage` helpers are wrapped in `try/catch` to handle private-browsing mode and storage quota errors gracefully.
@@ -324,13 +323,13 @@ The draft is synced on every state change via `useEffect([state])`. If the user 
 
 ### React Router Setup
 
-| URL                    | Component          | Notes                               |
-| ---------------------- | ------------------ | ----------------------------------- |
-| `/`                    | —                  | Redirects to `/quote/personal-info` |
-| `/quote/personal-info` | `StepPersonalInfo` | Step 1                              |
-| `/quote/coverage`      | `StepCoverage`     | Step 2 (+ conditional health Qs)    |
-| `/quote/summary`       | `StepSummary`      | Step 3                              |
-| `*` (any other)        | —                  | Redirects to Step 1                 |
+| URL | Component | Notes |
+|-----|-----------|-------|
+| `/` | — | Redirects to `/quote/personal-info` |
+| `/quote/personal-info` | `StepPersonalInfo` | Step 1 |
+| `/quote/coverage` | `StepCoverage` | Step 2 (+ conditional health Qs) |
+| `/quote/summary` | `StepSummary` | Step 3 |
+| `*` (any other) | — | Redirects to Step 1 |
 
 All step routes share the `QuoteLayout` component which renders `AppLayout` with `<Outlet />`. This keeps the header and stepper mounted across step navigations (no remounting).
 
@@ -340,4 +339,4 @@ The stepper derives `activeStep` from `useLocation().pathname` via `STEP_ROUTES.
 
 ---
 
-_Built with ❤️ for Clara's Onboarding Team._
+*Built with ❤️ for Clara's Onboarding Team.*
