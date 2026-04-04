@@ -68,7 +68,9 @@ export default function StepPersonalInfo() {
   }
 
   return (
-    <Card sx={{ borderRadius: 1, overflow: 'hidden', borderTop: '3px solid', borderTopColor: 'primary.main' }}>
+    <Card sx={{ overflow: 'hidden' }}>
+      <Box sx={{ height: 3, backgroundColor: 'primary.main' }} />
+
       <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
           <Typography variant="h2" component="h1" color="primary.main">

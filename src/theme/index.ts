@@ -1,23 +1,24 @@
 /**
  * @file src/theme/index.ts
- * @description Clara's custom MUI v6 theme.
+ * @description Clara's custom MUI v6 theme — Enterprise Fintech Standard.
  *
  * Palette rationale:
  *  - Primary  (#1B3A6B) — Deep Navy: conveys trust, stability, and authority
  *    appropriate for an insurance product.
- *  - Secondary (#0097A7) — Warm Teal: energetic accent for CTAs and active
- *    step indicators; maintains WCAG AA contrast on white.
- *  - Background surfaces use a soft grey (#F5F7FA) to lift cards and the
- *    form container off the page without harsh shadows.
+ *  - Secondary (#0097A7) — Teal: accent for active step indicators and
+ *    informational chips; maintains WCAG AA contrast on white.
+ *  - Background surfaces use a soft grey (#F5F7FA) to lift cards off the
+ *    page without introducing heavy visual noise.
  *
  * Typography:
- *  - "Inter" (Google Fonts) — a humanist sans‑serif designed for screen
- *    legibility; widely considered the gold standard for form-heavy UIs.
+ *  - "Inter" (Google Fonts) — humanist sans-serif designed for screen
+ *    legibility; the standard choice for form-heavy, data-dense UIs.
  *
- * Component overrides:
- *  - Buttons and inputs use a 4px border-radius for a sharp, corporate feel.
- *  - The active stepper icon uses the primary color to create a clear
- *    visual hierarchy across the 3-step wizard.
+ * Design constraints (Fintech Standard):
+ *  - All radii are 4px — sharp corners signal precision and formality.
+ *  - Shadows are deliberately minimal (max 2px blur) — no depth theatre.
+ *  - Buttons have no lift, transform, or glow on hover — static is trustworthy.
+ *  - No gradients in any component override; solid colours only.
  */
 
 import { createTheme } from '@mui/material/styles'
@@ -88,36 +89,79 @@ const themeOptions: ThemeOptions = {
       'sans-serif',
     ].join(','),
 
-    h1: { fontSize: '2rem',    fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.2 },
-    h2: { fontSize: '1.5rem',  fontWeight: 600, letterSpacing: '-0.02em',  lineHeight: 1.3 },
-    h3: { fontSize: '1.25rem', fontWeight: 600, letterSpacing: '-0.015em' },
-    h4: { fontSize: '1.125rem',fontWeight: 600 },
-    h5: { fontSize: '1rem',    fontWeight: 600 },
-    h6: { fontSize: '0.875rem',fontWeight: 600 },
-
-    subtitle1: { fontSize: '1rem',     fontWeight: 500, lineHeight: 1.5 },
-    subtitle2: { fontSize: '0.875rem', fontWeight: 500, color: '#4A5568' },
-    body1:     { fontSize: '1rem',     lineHeight: 1.6 },
-    body2:     { fontSize: '0.875rem', lineHeight: 1.57 },
-
-    button:  { textTransform: 'none', fontWeight: 600, letterSpacing: '0.01em' },
-    caption: { fontSize: '0.75rem', color: '#4A5568' },
+    h1: {
+      fontSize: '2rem',
+      fontWeight: 700,
+      letterSpacing: '-0.025em',
+      lineHeight: 1.2,
+    },
+    h2: {
+      fontSize: '1.5rem',
+      fontWeight: 600,
+      letterSpacing: '-0.02em',
+      lineHeight: 1.3,
+    },
+    h3: {
+      fontSize: '1.25rem',
+      fontWeight: 600,
+      letterSpacing: '-0.015em',
+    },
+    h4: {
+      fontSize: '1.125rem',
+      fontWeight: 600,
+    },
+    h5: {
+      fontSize: '1rem',
+      fontWeight: 600,
+    },
+    h6: {
+      fontSize: '0.875rem',
+      fontWeight: 600,
+    },
+    subtitle1: {
+      fontSize: '1rem',
+      fontWeight: 500,
+      lineHeight: 1.5,
+    },
+    subtitle2: {
+      fontSize: '0.875rem',
+      fontWeight: 500,
+      color: '#4A5568',
+    },
+    body1: {
+      fontSize: '1rem',
+      lineHeight: 1.6,
+    },
+    body2: {
+      fontSize: '0.875rem',
+      lineHeight: 1.57,
+    },
+    button: {
+      textTransform: 'none',
+      fontWeight: 600,
+      letterSpacing: '0.01em',
+    },
+    caption: {
+      fontSize: '0.75rem',
+      color: '#4A5568',
+    },
   },
 
+  // 4px globally — sharp, precise, institutional
   shape: {
-    // 4px enforces a sharp, corporate feel throughout — no pill-shaped buttons or cards.
     borderRadius: 4,
   },
 
+  // Flat shadow scale: maximum 2px spread, no heavy depth
   shadows: [
     'none',
-    '0px 1px 2px rgba(0,0,0,0.05)',
-    '0px 1px 3px rgba(0,0,0,0.06)',
-    '0px 2px 4px rgba(0,0,0,0.06)',
-    '0px 2px 4px rgba(0,0,0,0.06)',
-    '0px 2px 4px rgba(0,0,0,0.06)',
-    // MUI requires 25 shadow values — remaining levels share the same subtle depth
-    ...Array<string>(19).fill('0px 2px 4px rgba(0,0,0,0.06)'),
+    '0px 1px 2px rgba(0,0,0,0.06)',
+    '0px 1px 3px rgba(0,0,0,0.08)',
+    '0px 2px 4px rgba(0,0,0,0.08)',
+    '0px 2px 6px rgba(0,0,0,0.10)',
+    '0px 2px 8px rgba(0,0,0,0.10)',
+    // MUI requires 25 shadow values — remainder use the same restrained value
+    ...Array<string>(19).fill('0px 2px 8px rgba(0,0,0,0.10)'),
   ] as ThemeOptions['shadows'],
 
   components: {
@@ -154,7 +198,8 @@ const themeOptions: ThemeOptions = {
           paddingLeft: 24,
           paddingRight: 24,
           fontSize: '0.9375rem',
-          transition: 'background-color 0.15s ease',
+          // No transform, no glow — interactions are communicated via colour only
+          transition: 'background-color 0.15s ease, border-color 0.15s ease',
         },
         containedPrimary: {
           '&:hover': {
@@ -221,6 +266,7 @@ const themeOptions: ThemeOptions = {
           color: '#CBD5E0',
           '&.Mui-active': {
             color: CLARA_NAVY,
+            // No glow — active state is communicated solely by colour
           },
           '&.Mui-completed': {
             color: CLARA_TEAL,
@@ -271,7 +317,7 @@ const themeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           borderRadius: 2,
-          height: 6,
+          height: 4,
           backgroundColor: '#E2E8F0',
         },
         bar: {

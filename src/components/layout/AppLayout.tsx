@@ -15,7 +15,7 @@
  *   │  </main>                                 │
  *   └─────────────────────────────────────────┘
  *
- * The layout no longer needs an activeStep prop — FormStepper now derives
+ * The layout no longer needs an activeStep prop — FormStepper derives
  * the active step from useLocation (React Router) directly.
  */
 

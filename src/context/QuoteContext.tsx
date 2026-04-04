@@ -44,8 +44,11 @@ import type { PersonalInfoStep, CoverageStep } from '../types/quote.types'
 import { calculatePremium } from '../utils/premiumCalculator'
 import type { PremiumResult } from '../utils/premiumCalculator'
 
+// ─── Constants ────────────────────────────────────────────────────────────────
+
 const STORAGE_KEY = 'clara_quote_draft'
 
+// ─── State Shape ──────────────────────────────────────────────────────────────
 
 /**
  * The subset of state persisted to localStorage.
@@ -65,18 +68,25 @@ export interface QuoteState extends PersistedQuoteState {
   premium: PremiumResult | null
 }
 
+// ─── Initial State ────────────────────────────────────────────────────────────
+
 const INITIAL_STATE: QuoteState = {
   personalInfo: null,
   coverage: null,
   premium: null,
 }
 
+// ─── Actions ──────────────────────────────────────────────────────────────────
 
 export type QuoteAction =
   | { type: 'SET_PERSONAL_INFO'; payload: PersonalInfoStep }
   | { type: 'SET_COVERAGE'; payload: CoverageStep }
   | { type: 'COMPUTE_PREMIUM' }
   | { type: 'RESET' }
+
+// ─── Helpers ──────────────────────────────────────────────────────────────────
+
+ 
 
 /**
  * Computes the premium from state slices, or returns null if data is incomplete.
@@ -96,6 +106,8 @@ function computePremium(state: QuoteState): PremiumResult | null {
     includesSpouse: coverage.includesSpouse,
   })
 }
+
+// ─── Reducer ──────────────────────────────────────────────────────────────────
 
 function quoteReducer(state: QuoteState, action: QuoteAction): QuoteState {
   switch (action.type) {
@@ -117,6 +129,8 @@ function quoteReducer(state: QuoteState, action: QuoteAction): QuoteState {
       return state
   }
 }
+
+// ─── LocalStorage Helpers ─────────────────────────────────────────────────────
 
 function readFromStorage(): Partial<PersistedQuoteState> {
   try {
@@ -149,6 +163,8 @@ function clearStorage(): void {
   }
 }
 
+// ─── Context ──────────────────────────────────────────────────────────────────
+
 interface QuoteContextValue {
   /** Current quote wizard state. */
   state: QuoteState
@@ -165,11 +181,14 @@ interface QuoteContextValue {
 
 const QuoteContext = createContext<QuoteContextValue | null>(null)
 
+// ─── Provider ─────────────────────────────────────────────────────────────────
+
 interface QuoteProviderProps {
   children: ReactNode
 }
 
 export function QuoteProvider({ children }: QuoteProviderProps) {
+  // Hydrate initial state from localStorage on first render
   const hydratedInitial: QuoteState = (() => {
     const saved = readFromStorage()
     return {
@@ -181,6 +200,7 @@ export function QuoteProvider({ children }: QuoteProviderProps) {
 
   const [state, dispatch] = useReducer(quoteReducer, hydratedInitial)
 
+  // Sync to localStorage whenever state changes (excluding premium)
   useEffect(() => {
     if (state.personalInfo === null && state.coverage === null) {
       clearStorage()
@@ -204,6 +224,8 @@ export function QuoteProvider({ children }: QuoteProviderProps) {
     </QuoteContext.Provider>
   )
 }
+
+// ─── Consumer Hook ────────────────────────────────────────────────────────────
 
 /**
  * Access the quote context from any component inside QuoteProvider.

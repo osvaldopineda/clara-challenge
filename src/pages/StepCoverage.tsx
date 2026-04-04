@@ -141,8 +141,8 @@ export default function StepCoverage() {
     }
 
     dispatch({ type: 'SET_COVERAGE', payload: coveragePayload })
-
-    // Dispatch COMPUTE_PREMIUM eagerly so Step 3 has the result immediately on mount.
+    // Store the calculated premium immediately so Step 3 sees it upon arrival
+    // without needing to re-derive it from a separate async trigger.
     dispatch({ type: 'COMPUTE_PREMIUM' })
 
     void navigate(ROUTES.SUMMARY)
@@ -174,7 +174,9 @@ export default function StepCoverage() {
   )
 
   return (
-    <Card sx={{ borderRadius: 1, overflow: 'hidden', borderTop: '3px solid', borderTopColor: 'primary.main' }}>
+    <Card sx={{ overflow: 'hidden' }}>
+      <Box sx={{ height: 3, backgroundColor: 'primary.main' }} />
+
       <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', mb: 1, gap: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>

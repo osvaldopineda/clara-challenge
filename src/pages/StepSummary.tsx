@@ -42,15 +42,14 @@ export default function StepSummary() {
     severity: 'success',
   })
 
-  // Compute (or recompute) the premium whenever this page is visited.
-  // Placed before the route guard so hooks are always called in the same order.
   useEffect(() => {
+    // Only compute if we have the prerequisites
     if (state.personalInfo && state.coverage) {
       computeAndStorePremium()
     }
   }, [state.personalInfo, state.coverage, computeAndStorePremium])
 
-  // Route Guard: Redirect to Step 1 if directly hitting Step 3 without data
+  // Route Guard: redirect to Step 1 if user lands here directly without data
   if (!state.personalInfo || !state.coverage) {
     return <Navigate to={ROUTES.PERSONAL_INFO} replace />
   }
@@ -67,8 +66,8 @@ export default function StepSummary() {
     try {
       const response = await submitQuote(state)
       setSnackbar({ open: true, message: response.message, severity: 'success' })
-      // Typically we'd navigate to a dedicated success/thank-you view here,
-      // e.g.: setTimeout(() => { resetQuote(); void navigate('/thank-you') }, 2000)
+      // Typically we'd navigate to a dedicated success/thank-you view here.
+      // e.g., setTimeout(() => { resetQuote(); void navigate('/thank-you') }, 2000)
     } catch (error) {
       const err = error as Error
       setSnackbar({ open: true, message: err.message, severity: 'error' })
@@ -86,7 +85,9 @@ export default function StepSummary() {
 
   return (
     <>
-      <Card sx={{ borderRadius: 1, overflow: 'hidden', borderTop: '3px solid', borderTopColor: 'primary.main' }}>
+      <Card sx={{ overflow: 'hidden' }}>
+        <Box sx={{ height: 3, backgroundColor: 'primary.main' }} />
+
         <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
             <Typography variant="h2" component="h1" color="primary.main" id="summary-heading">
@@ -245,7 +246,7 @@ export default function StepSummary() {
           variant="filled"
           sx={{ width: '100%', borderRadius: 1 }}
           ref={errorRef}
-          tabIndex={-1} // Makes the alert focusable programmatically (see focus management above)
+          tabIndex={-1} // Makes it focusable programmatically for screen reader focus management
           action={
             snackbar.severity === 'error' && (
               <Button color="inherit" size="small" onClick={handleSubmit} aria-label="Retry submitting quote">

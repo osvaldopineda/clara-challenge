@@ -2,9 +2,9 @@
  * @file src/components/layout/FormStepper.tsx
  * @description MUI Stepper that visualises the 3-step quote wizard progress.
  *
- * `activeStep` is derived from the current URL via `useLocation` (react-router-dom)
- * rather than received as a prop — this keeps the stepper self-contained and always
- * in sync with the router without a prop-drilling chain.
+ * Phase 4 update: `activeStep` is now derived from the current URL using
+ * `useLocation` (react-router-dom) rather than received as a prop.
+ * This makes the stepper self-contained and always in sync with the router.
  *
  * Step definitions are imported from the shared STEP_ROUTES constant so
  * the route ↔ step mapping lives in exactly one place.
