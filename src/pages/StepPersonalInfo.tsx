@@ -13,6 +13,7 @@ import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import TextField from '@mui/material/TextField'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useNavigate } from 'react-router-dom'
 import { useForm, Controller } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -67,10 +68,7 @@ export default function StepPersonalInfo() {
   }
 
   return (
-    <Card sx={{ borderRadius: 3, overflow: 'hidden' }}>
-      {/* Colour band */}
-      <Box sx={{ height: 6, background: 'linear-gradient(90deg, #1B3A6B 0%, #2A5298 100%)' }} />
-
+    <Card sx={{ borderRadius: 1, overflow: 'hidden', borderTop: '3px solid', borderTopColor: 'primary.main' }}>
       <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
           <Typography variant="h2" component="h1" color="primary.main">
@@ -177,8 +175,9 @@ export default function StepPersonalInfo() {
               id="btn-step1-next"
               variant="contained"
               size="large"
+              endIcon={<ArrowForwardIcon />}
             >
-              Next: Coverage →
+              Next: Coverage
             </Button>
           </Box>
         </Box>

@@ -2,9 +2,9 @@
  * @file src/components/layout/FormStepper.tsx
  * @description MUI Stepper that visualises the 3-step quote wizard progress.
  *
- * Phase 4 update: `activeStep` is now derived from the current URL using
- * `useLocation` (react-router-dom) rather than received as a prop.
- * This makes the stepper self-contained and always in sync with the router.
+ * `activeStep` is derived from the current URL via `useLocation` (react-router-dom)
+ * rather than received as a prop — this keeps the stepper self-contained and always
+ * in sync with the router without a prop-drilling chain.
  *
  * Step definitions are imported from the shared STEP_ROUTES constant so
  * the route ↔ step mapping lives in exactly one place.
@@ -20,8 +20,6 @@ import useMediaQuery from '@mui/material/useMediaQuery'
 import { useLocation } from 'react-router-dom'
 import { STEP_ROUTES } from '../../utils/routes'
 
-// ─── Active Step Derivation ───────────────────────────────────────────────────
-
 /**
  * Maps the current pathname to a zero-based step index.
  * Returns 0 (first step) for any unrecognised path so the stepper
@@ -32,8 +30,6 @@ function useActiveStep(): number {
   const index = STEP_ROUTES.findIndex((s) => s.path === pathname)
   return index >= 0 ? index : 0
 }
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function FormStepper() {
   const theme = useTheme()
@@ -51,7 +47,6 @@ export default function FormStepper() {
         borderColor: 'divider',
       }}
     >
-      {/* Step counter label for mobile */}
       {isMobile && (
         <Typography
           variant="caption"

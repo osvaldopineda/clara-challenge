@@ -29,8 +29,6 @@ import Tooltip from '@mui/material/Tooltip'
 import Chip from '@mui/material/Chip'
 import FormStepper from './FormStepper'
 
-// ─── Clara Logo Mark ──────────────────────────────────────────────────────────
-
 function ClaraLogo() {
   return (
     <Box
@@ -84,13 +82,9 @@ function ClaraLogo() {
   )
 }
 
-// ─── Component Props ──────────────────────────────────────────────────────────
-
 interface AppLayoutProps {
   children: ReactNode
 }
-
-// ─── Component ────────────────────────────────────────────────────────────────
 
 export default function AppLayout({ children }: AppLayoutProps) {
   return (
@@ -102,14 +96,12 @@ export default function AppLayout({ children }: AppLayoutProps) {
         backgroundColor: 'background.default',
       }}
     >
-      {/* ── Header ─────────────────────────────────────────────────────────── */}
       <AppBar
         position="sticky"
         elevation={0}
         sx={{
-          background: 'linear-gradient(135deg, #112447 0%, #1B3A6B 60%, #2A5298 100%)',
+          backgroundColor: 'primary.dark',
           borderBottom: '1px solid rgba(255,255,255,0.08)',
-          backdropFilter: 'blur(8px)',
         }}
       >
         <Toolbar
@@ -119,10 +111,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
             justifyContent: 'space-between',
           }}
         >
-          {/* Brand */}
           <ClaraLogo />
 
-          {/* Right-side badge */}
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Tooltip title="Your quote is private and encrypted" arrow placement="bottom">
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, cursor: 'default' }}>
@@ -178,10 +168,8 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </Toolbar>
       </AppBar>
 
-      {/* ── Step Progress ───────────────────────────────────────────────────── */}
       <FormStepper />
 
-      {/* ── Main Content ────────────────────────────────────────────────────── */}
       <Box
         component="main"
         sx={{
@@ -193,7 +181,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
         <Container
           maxWidth="md"
           sx={{
-            // Vertical centering feel — nudge content up slightly
             display: 'flex',
             flexDirection: 'column',
             gap: 3,
@@ -203,7 +190,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
         </Container>
       </Box>
 
-      {/* ── Footer ──────────────────────────────────────────────────────────── */}
       <Box
         component="footer"
         sx={{

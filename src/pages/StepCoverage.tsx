@@ -27,6 +27,8 @@ import Checkbox from '@mui/material/Checkbox'
 import ListItemText from '@mui/material/ListItemText'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
+import ArrowBackIcon from '@mui/icons-material/ArrowBack'
+import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useForm, Controller, useWatch } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
@@ -35,8 +37,6 @@ import { useQuoteContext } from '../context/QuoteContext'
 import { ROUTES } from '../utils/routes'
 import { CoverageType, PreExistingCondition, type CoverageStep } from '../types/quote.types'
 import { calculatePremium, SENIOR_AGE_THRESHOLD } from '../utils/premiumCalculator'
-
-// ─── Schema Definition ────────────────────────────────────────────────────────
 
 // We use string 'true'/'false' for yes/no radio buttons to ensure
 // empty state can be detected (null/undefined) instead of defaulting to false.
@@ -78,8 +78,6 @@ type CoverageFormValues = {
   includesSpouse?: string
 }
 
-// ─── Component ────────────────────────────────────────────────────────────────
-
 export default function StepCoverage() {
   const navigate = useNavigate()
   const { state, dispatch } = useQuoteContext()
@@ -92,8 +90,6 @@ export default function StepCoverage() {
   const age = state.personalInfo.age
   const isSenior = age > SENIOR_AGE_THRESHOLD
 
-  // ─── Form Setup ─────────────────────────────────────────────────────────────
-  
   const defaultValues: CoverageFormValues = {
     coverageType: state.coverage?.coverageType || '',
     hasPreExisting: state.coverage ? (state.coverage.preExistingConditions.length > 0 ? 'true' : 'false') : '',
@@ -112,8 +108,6 @@ export default function StepCoverage() {
     defaultValues,
     context: { isSenior },
   })
-
-  // ─── Real-time Premium Calculation ──────────────────────────────────────────
 
   const formValues = useWatch({ control })
 
@@ -134,8 +128,6 @@ export default function StepCoverage() {
     })
   }, [formValues, age])
 
-  // ─── Submit Handler ─────────────────────────────────────────────────────────
-
   const onSubmit = (data: CoverageFormValues) => {
     const coveragePayload: CoverageStep = {
       coverageType: data.coverageType as CoverageType,
@@ -149,15 +141,12 @@ export default function StepCoverage() {
     }
 
     dispatch({ type: 'SET_COVERAGE', payload: coveragePayload })
-    
-    // As requested, store calculated premium in quote context on submit. 
-    // Usually this is done via COMPUTE_PREMIUM step, but we dispatch it eagerly so Step 3 sees it immediately.
+
+    // Dispatch COMPUTE_PREMIUM eagerly so Step 3 has the result immediately on mount.
     dispatch({ type: 'COMPUTE_PREMIUM' })
-    
+
     void navigate(ROUTES.SUMMARY)
   }
-
-  // ─── UI Helpers ─────────────────────────────────────────────────────────────
 
   const conditionOptions = [
     { value: PreExistingCondition.Diabetes, label: 'Diabetes' },
@@ -185,9 +174,7 @@ export default function StepCoverage() {
   )
 
   return (
-    <Card sx={{ borderRadius: 3, overflow: 'hidden' }}>
-      <Box sx={{ height: 6, background: 'linear-gradient(90deg, #1B3A6B 40%, #0097A7 100%)' }} />
-
+    <Card sx={{ borderRadius: 1, overflow: 'hidden', borderTop: '3px solid', borderTopColor: 'primary.main' }}>
       <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', mb: 1, gap: 2 }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
@@ -196,28 +183,25 @@ export default function StepCoverage() {
             </Typography>
             <Chip label="Step 2 of 3" size="small" color="primary" sx={{ fontWeight: 700 }} />
           </Box>
-          
-          {/* Live Premium Badge */}
+
           {livePremium && (
-            <Chip 
-              label={`Estimated Premium: $${livePremium.monthlyPremium.toFixed(2)} / mo`} 
-              color="secondary" 
-              variant="outlined" 
+            <Chip
+              label={`Estimated Premium: $${livePremium.monthlyPremium.toFixed(2)} / mo`}
+              color="secondary"
+              variant="outlined"
               sx={{ fontWeight: 'bold', fontSize: '1rem', p: 1 }}
             />
           )}
         </Box>
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          Choose the coverage tier that best fits your needs. 
-          {isSenior && " Since you are over 65, we need to ask a few additional health questions to refine your estimate."}
+          Choose the coverage tier that best fits your needs.
+          {isSenior && ' Since you are over 65, we need to ask a few additional health questions to refine your estimate.'}
         </Typography>
 
         <Divider sx={{ mb: 3 }} />
 
         <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-          
-          {/* 1. Coverage Tier */}
           <Controller
             name="coverageType"
             control={control}
@@ -227,15 +211,14 @@ export default function StepCoverage() {
                   Selected Coverage Tier
                 </FormLabel>
                 <RadioGroup {...field} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 2 }}>
-                  
                   {[
                     { value: CoverageType.Basic, label: 'Basic', desc: '$50 base / mo' },
                     { value: CoverageType.Standard, label: 'Standard', desc: '$100 base / mo' },
                     { value: CoverageType.Premium, label: 'Premium', desc: '$200 base / mo' },
                   ].map((tier) => (
-                    <Card key={tier.value} variant="outlined" sx={{ 
+                    <Card key={tier.value} variant="outlined" sx={{
                       borderColor: field.value === tier.value ? 'primary.main' : 'divider',
-                      backgroundColor:  field.value === tier.value ? 'rgba(27, 58, 107, 0.04)' : 'transparent',
+                      backgroundColor: field.value === tier.value ? 'rgba(27, 58, 107, 0.04)' : 'transparent',
                     }}>
                       <CardContent sx={{ p: '16px !important', textAlign: 'center' }}>
                         <FormControlLabel
@@ -248,16 +231,14 @@ export default function StepCoverage() {
                       </CardContent>
                     </Card>
                   ))}
-
                 </RadioGroup>
                 {errors.coverageType && <FormHelperText sx={{ mt: 2 }}>{errors.coverageType.message}</FormHelperText>}
               </FormControl>
             )}
           />
 
-          {/* 2. Additional Questions (Senior Only) */}
           {isSenior && (
-            <Box sx={{ p: 3, pt: 4, borderRadius: 2, border: '1px solid', borderColor: 'divider', backgroundColor: 'background.default', mb: 4 }}>
+            <Box sx={{ p: 3, pt: 4, borderRadius: 1, border: '1px solid', borderColor: 'divider', backgroundColor: 'background.default', mb: 4 }}>
               <Typography variant="h4" color="primary.main" mb={1}>Additional Health Details</Typography>
               <Typography variant="body2" color="text.secondary" mb={3}>
                 Please answer the following questions to help us calculate the most accurate rate.
@@ -302,23 +283,24 @@ export default function StepCoverage() {
             </Box>
           )}
 
-          {/* Navigation */}
           <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
             <Button
               id="btn-step2-back"
               variant="outlined"
               size="large"
+              startIcon={<ArrowBackIcon />}
               onClick={() => { void navigate(ROUTES.PERSONAL_INFO) }}
             >
-              ← Back
+              Back
             </Button>
             <Button
               type="submit"
               id="btn-step2-next"
               variant="contained"
               size="large"
+              endIcon={<ArrowForwardIcon />}
             >
-              Next: Review →
+              Next: Review
             </Button>
           </Box>
         </Box>
