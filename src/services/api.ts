@@ -4,7 +4,7 @@ export async function submitQuote(
 ): Promise<{ success: boolean; message: string }> {
   return new Promise((resolve, reject) => {
     setTimeout(() => {
-      if (Math.random() > 0.9) {
+      if (Math.random() > 0.5) {
         resolve({
           success: true,
           message: 'Quote submitted successfully. An agent will contact you shortly.',

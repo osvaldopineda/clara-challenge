@@ -18,6 +18,7 @@ import { useQuoteContext } from '../context/QuoteContext'
 import { ROUTES } from '../utils/routes'
 import { submitQuote } from '../services/api'
 import { StepNavigation, PremiumDisplay } from '../components/common'
+import { SENIOR_AGE_THRESHOLD } from '../utils/premiumCalculator'
 
 export default function StepSummary() {
   const navigate = useNavigate()
@@ -44,6 +45,8 @@ export default function StepSummary() {
   if (!state.personalInfo || !state.coverage) {
     return <Navigate to={ROUTES.PERSONAL_INFO} replace />
   }
+
+  const isSenior = state.personalInfo.age > SENIOR_AGE_THRESHOLD
 
   const handleStartOver = () => {
     resetQuote()
@@ -158,28 +161,32 @@ export default function StepSummary() {
                       }
                     />
                   </ListItem>
-                  <ListItem divider>
-                    <ListItemText
-                      primary="Pre-existing Conditions"
-                      secondary={
-                        state.coverage.preExistingConditions.length > 0
-                          ? state.coverage.preExistingConditions.join(', ')
-                          : 'None'
-                      }
-                    />
-                  </ListItem>
-                  <ListItem divider>
-                    <ListItemText
-                      primary="Takes Prescription Meds"
-                      secondary={formatYesNo(state.coverage.takesPrescriptionMedication)}
-                    />
-                  </ListItem>
-                  <ListItem divider>
-                    <ListItemText
-                      primary="Uses Tobacco"
-                      secondary={formatYesNo(state.coverage.usesTobacco)}
-                    />
-                  </ListItem>
+                  {isSenior && (
+                    <>
+                      <ListItem divider>
+                        <ListItemText
+                          primary="Pre-existing Conditions"
+                          secondary={
+                            state.coverage.preExistingConditions.length > 0
+                              ? state.coverage.preExistingConditions.join(', ')
+                              : 'None'
+                          }
+                        />
+                      </ListItem>
+                      <ListItem divider>
+                        <ListItemText
+                          primary="Takes Prescription Meds"
+                          secondary={formatYesNo(state.coverage.takesPrescriptionMedication)}
+                        />
+                      </ListItem>
+                      <ListItem divider>
+                        <ListItemText
+                          primary="Uses Tobacco"
+                          secondary={formatYesNo(state.coverage.usesTobacco)}
+                        />
+                      </ListItem>
+                    </>
+                  )}
                   <ListItem>
                     <ListItemText
                       primary="Includes Spouse"

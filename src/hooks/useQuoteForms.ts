@@ -13,6 +13,7 @@ export const personalInfoSchema = yup
       .transform((value: number) => (Number.isNaN(value) ? undefined : value))
       .positive('Age must be a positive number')
       .integer('Age must be a whole number')
+      .min(18, 'You must be at least 18 years old to request a quote.')
       .required('Age is required'),
     zipCode: yup
       .string()

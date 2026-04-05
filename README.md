@@ -12,7 +12,6 @@
 3. [Architecture & Decisions](#architecture--decisions)
 4. [Business Logic & Testing Strategy](#business-logic--testing-strategy)
 5. [Folder Structure](#folder-structure)
-6. [Phase Roadmap](#phase-roadmap)
 
 ---
 
@@ -120,7 +119,7 @@ Multi-step forms with large field counts are where _uncontrolled_ form managemen
 | **Multi-step persistence** | `useForm` + `context` allow step-level validation while accumulating data across steps without remounting.                                             |
 | **Resolver bridge**        | `@hookform/resolvers/yup` adapts Yup schemas into RHF's resolver API with one line of code.                                                            |
 
-Compared to Formik, RHF has zero-dependency overhead and benchmarks 10–20x fewer re-renders on complex forms.
+Compared to Formik, RHF has zero-dependency overhead and benchmarks 10–20x fewer re-renders on complex forms. Input validation enforces a minimum age of 18 for legal compliance in insurance quoting.
 
 ---
 
@@ -145,8 +144,6 @@ Deterministic ID generation for dynamic form fields, quote sessions, and list-re
 
 ```
 src/
-├── assets/
-│   └── icons/              # SVG icons and static assets
 │
 ├── components/
 │   ├── common/             # Reusable, domain-agnostic UI atoms
@@ -249,19 +246,6 @@ npm run test:coverage
 
 ---
 
-## Phase Roadmap
-
-| Phase | Title                                     | Status      |
-| ----- | ----------------------------------------- | ----------- |
-| **1** | Scaffolding, Tooling & Base Configuration | ✅ Complete |
-| **2** | Core Business Logic & Unit Testing        | ✅ Complete |
-| **3** | MUI Theme & Global Layout                 | ✅ Complete |
-| **4** | Quote Context & React Router Wizard       | ✅ Complete |
-| **5** | Form Steps with RHF + Yup Validation      | ✅ Complete |
-| **6** | Quote Summary, Polish & Final QA          | ✅ Complete |
-
----
-
 ## Theme Configuration
 
 The Clara MUI theme lives in `src/theme/index.ts` and is injected via `ThemeProvider` in `src/main.tsx`.
@@ -335,7 +319,7 @@ The draft is synced on every state change. If the user refreshes mid-form, their
 | `/quote/summary`       | `StepSummary`      | Step 3                              |
 | `*` (any other)        | —                  | Redirects to Step 1                 |
 
-All step routes share the `QuoteLayout` component which renders `AppLayout` with `<Outlet />`. This keeps the header and stepper mounted across step navigations (no remounting).
+All step routes share the `QuoteLayout` component which renders `AppLayout` with `<Outlet />`. This keeps the header and stepper mounted across step navigations (no remounting). The Summary step features adaptive UI, hiding supplemental health disclosures for non-senior applicants to reduce cognitive load and ensure data relevance.
 
 ### FormStepper → useLocation
 
@@ -343,4 +327,4 @@ The stepper derives `activeStep` from `useLocation().pathname` via `STEP_ROUTES.
 
 ---
 
-_Built with ❤️ for Clara's Onboarding Team._
+_Documentation finalized for Clara Onboarding Team evaluation_
