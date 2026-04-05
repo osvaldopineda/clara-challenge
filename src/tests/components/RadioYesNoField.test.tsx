@@ -14,7 +14,7 @@ describe('RadioYesNoField', () => {
     render(
       <Wrapper defaultValues={{ testField: '' }}>
         <RadioYesNoField name="testField" label="Are you a robot?" />
-      </Wrapper>
+      </Wrapper>,
     )
 
     expect(screen.getByText('Are you a robot?')).toBeInTheDocument()
@@ -24,11 +24,11 @@ describe('RadioYesNoField', () => {
 
   it('changes value upon interaction', async () => {
     const user = userEvent.setup()
-    
+
     render(
       <Wrapper defaultValues={{ testField: '' }}>
         <RadioYesNoField name="testField" label="Are you a robot?" />
-      </Wrapper>
+      </Wrapper>,
     )
 
     const yesRadio = screen.getByLabelText('Yes') as HTMLInputElement
