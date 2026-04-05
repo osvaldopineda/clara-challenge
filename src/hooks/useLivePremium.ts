@@ -11,19 +11,28 @@ export function useLivePremium(
     includesSpouse?: string
   }
 ) {
+  const { coverageType, hasPreExisting, preExistingConditions, usesTobacco, includesSpouse } = formValues
+
   return useMemo(() => {
-    if (!formValues.coverageType || !['basic', 'standard', 'premium'].includes(formValues.coverageType)) {
+    if (!coverageType || !['basic', 'standard', 'premium'].includes(coverageType)) {
       return null
     }
 
-    const hasPreEx = formValues.hasPreExisting === 'true' && (formValues.preExistingConditions?.length || 0) > 0
+    const hasPreEx = hasPreExisting === 'true' && (preExistingConditions?.length || 0) > 0
 
     return calculatePremium({
       age,
-      coverageTier: formValues.coverageType as CoverageTier,
+      coverageTier: coverageType as CoverageTier,
       hasPreExistingConditions: hasPreEx,
-      usesTobacco: formValues.usesTobacco === 'true',
-      includesSpouse: formValues.includesSpouse === 'true',
+      usesTobacco: usesTobacco === 'true',
+      includesSpouse: includesSpouse === 'true',
     })
-  }, [formValues, age])
+  }, [
+    age,
+    coverageType,
+    hasPreExisting,
+    preExistingConditions?.length,
+    usesTobacco,
+    includesSpouse,
+  ])
 }

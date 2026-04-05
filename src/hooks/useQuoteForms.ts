@@ -1,4 +1,4 @@
-import { useForm } from 'react-hook-form'
+import { useForm, type Resolver } from 'react-hook-form'
 import { yupResolver } from '@hookform/resolvers/yup'
 import * as yup from 'yup'
 import { CoverageType, type PersonalInfoStep } from '../types/quote.types'
@@ -73,7 +73,7 @@ export type CoverageFormValues = {
 
 export function useCoverageForm(defaultValues: CoverageFormValues, isSenior: boolean) {
   return useForm<CoverageFormValues>({
-    resolver: yupResolver(coverageSchema) as any,
+    resolver: yupResolver(coverageSchema) as Resolver<CoverageFormValues>,
     defaultValues,
     context: { isSenior },
   })
