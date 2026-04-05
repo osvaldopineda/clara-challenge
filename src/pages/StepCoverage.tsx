@@ -1,18 +1,7 @@
-/**
- * @file src/pages/StepCoverage.tsx
- * @description Step 2 — Coverage Selection.
- *
- * Implements RHF with Yup validation, conditional additional questions for
- * seniors (age > 65), nested conditions (Pre-existing multiselect), and
- * real-time premium calculation.
- */
-
-import { useMemo } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import Radio from '@mui/material/Radio'
@@ -27,62 +16,20 @@ import Checkbox from '@mui/material/Checkbox'
 import ListItemText from '@mui/material/ListItemText'
 import InputLabel from '@mui/material/InputLabel'
 import OutlinedInput from '@mui/material/OutlinedInput'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useNavigate, Navigate } from 'react-router-dom'
-import { useForm, Controller, useWatch } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+import { FormProvider, Controller, useWatch } from 'react-hook-form'
 import { useQuoteContext } from '../context/QuoteContext'
 import { ROUTES } from '../utils/routes'
 import { CoverageType, PreExistingCondition, type CoverageStep } from '../types/quote.types'
-import { calculatePremium, SENIOR_AGE_THRESHOLD } from '../utils/premiumCalculator'
-
-// We use string 'true'/'false' for yes/no radio buttons to ensure
-// empty state can be detected (null/undefined) instead of defaulting to false.
-const schema = yup.object().shape({
-  coverageType: yup
-    .string()
-    .oneOf(Object.values(CoverageType))
-    .required('Please select a coverage type'),
-
-  hasPreExisting: yup.string().when('$isSenior', {
-    is: true,
-    then: (s) => s.required('Please answer this question'),
-  }),
-  preExistingConditions: yup.array().of(yup.string()).when('hasPreExisting', {
-    is: 'true',
-    then: (s) =>
-      s.min(1, 'Please select at least one condition').required('Please select at least one condition'),
-  }),
-  takesPrescriptionMedication: yup.string().when('$isSenior', {
-    is: true,
-    then: (s) => s.required('Please answer this question'),
-  }),
-  usesTobacco: yup.string().when('$isSenior', {
-    is: true,
-    then: (s) => s.required('Please answer this question'),
-  }),
-  includesSpouse: yup.string().when('$isSenior', {
-    is: true,
-    then: (s) => s.required('Please answer this question'),
-  }),
-})
-
-type CoverageFormValues = {
-  coverageType: string
-  hasPreExisting?: string
-  preExistingConditions?: string[]
-  takesPrescriptionMedication?: string
-  usesTobacco?: string
-  includesSpouse?: string
-}
+import { SENIOR_AGE_THRESHOLD } from '../utils/premiumCalculator'
+import { useCoverageForm, useLivePremium, type CoverageFormValues } from '../hooks'
+import { StepNavigation } from '../components/common'
+import { RadioYesNoField } from '../components/forms'
 
 export default function StepCoverage() {
   const navigate = useNavigate()
   const { state, dispatch } = useQuoteContext()
 
-  // Guard: if no personal info is set (e.g. direct URL visit), kick back to step 1
   if (!state.personalInfo) {
     return <Navigate to={ROUTES.PERSONAL_INFO} replace />
   }
@@ -99,34 +46,15 @@ export default function StepCoverage() {
     includesSpouse: state.coverage ? (state.coverage.includesSpouse ? 'true' : 'false') : '',
   }
 
+  const methods = useCoverageForm(defaultValues, isSenior)
   const {
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm<CoverageFormValues>({
-    resolver: yupResolver(schema) as any,
-    defaultValues,
-    context: { isSenior },
-  })
+    formState: { errors, isSubmitting },
+  } = methods
 
   const formValues = useWatch({ control })
-
-  const livePremium = useMemo(() => {
-    // Only calculate if a valid tier is selected
-    if (!formValues.coverageType || !Object.values(CoverageType).includes(formValues.coverageType as CoverageType)) {
-      return null
-    }
-
-    const hasPreEx = formValues.hasPreExisting === 'true' && (formValues.preExistingConditions?.length || 0) > 0
-
-    return calculatePremium({
-      age,
-      coverageTier: formValues.coverageType as CoverageType,
-      hasPreExistingConditions: hasPreEx,
-      usesTobacco: formValues.usesTobacco === 'true',
-      includesSpouse: formValues.includesSpouse === 'true',
-    })
-  }, [formValues, age])
+  const livePremium = useLivePremium(age, formValues)
 
   const onSubmit = (data: CoverageFormValues) => {
     const coveragePayload: CoverageStep = {
@@ -141,10 +69,7 @@ export default function StepCoverage() {
     }
 
     dispatch({ type: 'SET_COVERAGE', payload: coveragePayload })
-    // Store the calculated premium immediately so Step 3 sees it upon arrival
-    // without needing to re-derive it from a separate async trigger.
     dispatch({ type: 'COMPUTE_PREMIUM' })
-
     void navigate(ROUTES.SUMMARY)
   }
 
@@ -155,23 +80,6 @@ export default function StepCoverage() {
     { value: PreExistingCondition.CancerHistory, label: 'Cancer (history)' },
     { value: PreExistingCondition.Other, label: 'Other' },
   ]
-
-  const RadioYesNo = ({ name, label }: { name: keyof CoverageFormValues; label: string }) => (
-    <Controller
-      name={name}
-      control={control}
-      render={({ field }) => (
-        <FormControl error={!!errors[name]} component="fieldset" fullWidth sx={{ mb: 2 }}>
-          <FormLabel component="legend" sx={{ color: 'text.primary', mb: 1 }}>{label}</FormLabel>
-          <RadioGroup row {...field}>
-            <FormControlLabel value="true" control={<Radio color="primary" />} label="Yes" />
-            <FormControlLabel value="false" control={<Radio color="primary" />} label="No" />
-          </RadioGroup>
-          {errors[name] && <FormHelperText>{errors[name]?.message}</FormHelperText>}
-        </FormControl>
-      )}
-    />
-  )
 
   return (
     <Card sx={{ overflow: 'hidden' }}>
@@ -203,109 +111,95 @@ export default function StepCoverage() {
 
         <Divider sx={{ mb: 3 }} />
 
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
-          <Controller
-            name="coverageType"
-            control={control}
-            render={({ field }) => (
-              <FormControl error={!!errors.coverageType} component="fieldset" fullWidth sx={{ mb: 4 }}>
-                <FormLabel component="legend" sx={{ color: 'text.primary', fontWeight: 600, mb: 2 }}>
-                  Selected Coverage Tier
-                </FormLabel>
-                <RadioGroup {...field} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 2 }}>
-                  {[
-                    { value: CoverageType.Basic, label: 'Basic', desc: '$50 base / mo' },
-                    { value: CoverageType.Standard, label: 'Standard', desc: '$100 base / mo' },
-                    { value: CoverageType.Premium, label: 'Premium', desc: '$200 base / mo' },
-                  ].map((tier) => (
-                    <Card key={tier.value} variant="outlined" sx={{
-                      borderColor: field.value === tier.value ? 'primary.main' : 'divider',
-                      backgroundColor: field.value === tier.value ? 'rgba(27, 58, 107, 0.04)' : 'transparent',
-                    }}>
-                      <CardContent sx={{ p: '16px !important', textAlign: 'center' }}>
-                        <FormControlLabel
-                          value={tier.value}
-                          control={<Radio color="primary" />}
-                          label={<Typography fontWeight={600}>{tier.label}</Typography>}
-                          sx={{ m: 0 }}
-                        />
-                        <Typography variant="body2" color="text.secondary" mt={1}>{tier.desc}</Typography>
-                      </CardContent>
-                    </Card>
-                  ))}
-                </RadioGroup>
-                {errors.coverageType && <FormHelperText sx={{ mt: 2 }}>{errors.coverageType.message}</FormHelperText>}
-              </FormControl>
-            )}
-          />
-
-          {isSenior && (
-            <Box sx={{ p: 3, pt: 4, borderRadius: 1, border: '1px solid', borderColor: 'divider', backgroundColor: 'background.default', mb: 4 }}>
-              <Typography variant="h4" color="primary.main" mb={1}>Additional Health Details</Typography>
-              <Typography variant="body2" color="text.secondary" mb={3}>
-                Please answer the following questions to help us calculate the most accurate rate.
-              </Typography>
-
-              <RadioYesNo name="hasPreExisting" label="Do you have any pre-existing medical conditions?" />
-
-              {formValues.hasPreExisting === 'true' && (
-                <Controller
-                  name="preExistingConditions"
-                  control={control}
-                  render={({ field }) => (
-                    <FormControl error={!!errors.preExistingConditions} fullWidth sx={{ mb: 3, mt: -1, ml: { sm: 2 }, width: { sm: 'calc(100% - 16px)' } }}>
-                      <InputLabel id="conditions-label">Select Conditions</InputLabel>
-                      <Select
-                        labelId="conditions-label"
-                        multiple
-                        {...field}
-                        value={field.value || []}
-                        input={<OutlinedInput label="Select Conditions" />}
-                        renderValue={(selected) => (selected as string[])
-                          .map((val) => conditionOptions.find((o) => o.value === val)?.label)
-                          .join(', ')
-                        }
-                      >
-                        {conditionOptions.map((option) => (
-                          <MenuItem key={option.value} value={option.value}>
-                            <Checkbox checked={(field.value || []).includes(option.value)} />
-                            <ListItemText primary={option.label} />
-                          </MenuItem>
-                        ))}
-                      </Select>
-                      {errors.preExistingConditions && <FormHelperText>{errors.preExistingConditions.message}</FormHelperText>}
-                    </FormControl>
-                  )}
-                />
+        <FormProvider {...methods}>
+          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+            <Controller
+              name="coverageType"
+              control={control}
+              render={({ field }) => (
+                <FormControl error={!!errors.coverageType} component="fieldset" fullWidth sx={{ mb: 4 }}>
+                  <FormLabel component="legend" sx={{ color: 'text.primary', fontWeight: 600, mb: 2 }}>
+                    Selected Coverage Tier
+                  </FormLabel>
+                  <RadioGroup {...field} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 2 }}>
+                    {[
+                      { value: CoverageType.Basic, label: 'Basic', desc: '$50 base / mo' },
+                      { value: CoverageType.Standard, label: 'Standard', desc: '$100 base / mo' },
+                      { value: CoverageType.Premium, label: 'Premium', desc: '$200 base / mo' },
+                    ].map((tier) => (
+                      <Card key={tier.value} variant="outlined" sx={{
+                        borderColor: field.value === tier.value ? 'primary.main' : 'divider',
+                        backgroundColor: field.value === tier.value ? 'rgba(27, 58, 107, 0.04)' : 'transparent',
+                      }}>
+                        <CardContent sx={{ p: '16px !important', textAlign: 'center' }}>
+                          <FormControlLabel
+                            value={tier.value}
+                            control={<Radio color="primary" />}
+                            label={<Typography fontWeight={600}>{tier.label}</Typography>}
+                            sx={{ m: 0 }}
+                          />
+                          <Typography variant="body2" color="text.secondary" mt={1}>{tier.desc}</Typography>
+                        </CardContent>
+                      </Card>
+                    ))}
+                  </RadioGroup>
+                  {errors.coverageType && <FormHelperText sx={{ mt: 2 }}>{errors.coverageType.message as string}</FormHelperText>}
+                </FormControl>
               )}
+            />
 
-              <RadioYesNo name="takesPrescriptionMedication" label="Do you currently take any prescription medications?" />
-              <RadioYesNo name="usesTobacco" label="Do you use any tobacco products?" />
-              <RadioYesNo name="includesSpouse" label="Would you like to include your spouse / domestic partner in this coverage?" />
-            </Box>
-          )}
+            {isSenior && (
+              <Box sx={{ p: 3, pt: 4, borderRadius: 1, border: '1px solid', borderColor: 'divider', backgroundColor: 'background.default', mb: 4 }}>
+                <Typography variant="h4" color="primary.main" mb={1}>Additional Health Details</Typography>
+                <Typography variant="body2" color="text.secondary" mb={3}>
+                  Please answer the following questions to help us calculate the most accurate rate.
+                </Typography>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', mt: 4 }}>
-            <Button
-              id="btn-step2-back"
-              variant="outlined"
-              size="large"
-              startIcon={<ArrowBackIcon />}
-              onClick={() => { void navigate(ROUTES.PERSONAL_INFO) }}
-            >
-              Back
-            </Button>
-            <Button
-              type="submit"
-              id="btn-step2-next"
-              variant="contained"
-              size="large"
-              endIcon={<ArrowForwardIcon />}
-            >
-              Next: Review
-            </Button>
+                <RadioYesNoField name="hasPreExisting" label="Do you have any pre-existing medical conditions?" />
+
+                {formValues.hasPreExisting === 'true' && (
+                  <Controller
+                    name="preExistingConditions"
+                    control={control}
+                    render={({ field }) => (
+                      <FormControl error={!!errors.preExistingConditions} fullWidth sx={{ mb: 3, mt: -1, ml: { sm: 2 }, width: { sm: 'calc(100% - 16px)' } }}>
+                        <InputLabel id="conditions-label">Select Conditions</InputLabel>
+                        <Select
+                          labelId="conditions-label"
+                          multiple
+                          {...field}
+                          value={field.value || []}
+                          input={<OutlinedInput label="Select Conditions" />}
+                          renderValue={(selected) => (selected as string[])
+                            .map((val) => conditionOptions.find((o) => o.value === val)?.label)
+                            .join(', ')
+                          }
+                        >
+                          {conditionOptions.map((option) => (
+                            <MenuItem key={option.value} value={option.value}>
+                              <Checkbox checked={(field.value || []).includes(option.value)} />
+                              <ListItemText primary={option.label} />
+                            </MenuItem>
+                          ))}
+                        </Select>
+                        {errors.preExistingConditions && <FormHelperText>{errors.preExistingConditions.message as string}</FormHelperText>}
+                      </FormControl>
+                    )}
+                  />
+                )}
+
+                <RadioYesNoField name="takesPrescriptionMedication" label="Do you currently take any prescription medications?" />
+                <RadioYesNoField name="usesTobacco" label="Do you use any tobacco products?" />
+                <RadioYesNoField name="includesSpouse" label="Would you like to include your spouse / domestic partner in this coverage?" />
+              </Box>
+            )}
+
+            <StepNavigation 
+              onBack={() => { void navigate(ROUTES.PERSONAL_INFO) }} 
+              isSubmitting={isSubmitting} 
+            />
           </Box>
-        </Box>
+        </FormProvider>
       </CardContent>
     </Card>
   )

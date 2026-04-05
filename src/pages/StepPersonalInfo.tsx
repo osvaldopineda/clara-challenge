@@ -1,47 +1,17 @@
-/**
- * @file src/pages/StepPersonalInfo.tsx
- * @description Step 1 — Personal Information.
- *
- * Implements RHF with Yup validation for Name, Email, Age, and Zip Code.
- */
-
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Divider from '@mui/material/Divider'
 import TextField from '@mui/material/TextField'
-import ArrowForwardIcon from '@mui/icons-material/ArrowForward'
 import { useNavigate } from 'react-router-dom'
-import { useForm, Controller } from 'react-hook-form'
-import { yupResolver } from '@hookform/resolvers/yup'
-import * as yup from 'yup'
+import { Controller } from 'react-hook-form'
 import { useQuoteContext } from '../context/QuoteContext'
 import { ROUTES } from '../utils/routes'
+import { usePersonalInfoForm } from '../hooks'
+import { StepNavigation } from '../components/common'
 import type { PersonalInfoStep } from '../types/quote.types'
-
-const schema = yup
-  .object({
-    firstName: yup.string().required('First name is required'),
-    lastName: yup.string().required('Last name is required'),
-    email: yup
-      .string()
-      .email('Invalid email address')
-      .required('Email is required'),
-    age: yup
-      .number()
-      .transform((value) => (isNaN(value) ? undefined : value))
-      .positive('Age must be a positive number')
-      .integer('Age must be a whole number')
-      .required('Age is required'),
-    zipCode: yup
-      .string()
-      .matches(/^\d{5}(-\d{4})?$/, 'Must be a valid ZIP code (e.g., 12345)')
-      .required('ZIP code is required'),
-  })
-  .required()
 
 export default function StepPersonalInfo() {
   const navigate = useNavigate()
@@ -50,17 +20,8 @@ export default function StepPersonalInfo() {
   const {
     control,
     handleSubmit,
-    formState: { errors },
-  } = useForm<PersonalInfoStep>({
-    resolver: yupResolver(schema),
-    defaultValues: state.personalInfo || {
-      firstName: '',
-      lastName: '',
-      email: '',
-      age: '' as unknown as number, // allows placeholder empty state
-      zipCode: '',
-    },
-  })
+    formState: { errors, isSubmitting },
+  } = usePersonalInfoForm(state.personalInfo ?? undefined)
 
   const onSubmit = (data: PersonalInfoStep) => {
     dispatch({ type: 'SET_PERSONAL_INFO', payload: data })
@@ -171,17 +132,7 @@ export default function StepPersonalInfo() {
             />
           </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'flex-end' }}>
-            <Button
-              type="submit"
-              id="btn-step1-next"
-              variant="contained"
-              size="large"
-              endIcon={<ArrowForwardIcon />}
-            >
-              Next: Coverage
-            </Button>
-          </Box>
+          <StepNavigation isSubmitting={isSubmitting} />
         </Box>
       </CardContent>
     </Card>

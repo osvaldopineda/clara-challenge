@@ -1,34 +1,23 @@
-/**
- * @file src/pages/StepSummary.tsx
- * @description Step 3 — Review & Confirmation.
- *
- * Calls computeAndStorePremium() on mount so the premium is always fresh.
- * Renders a complete read-only summary, submits to a mock API, and handles
- * success/error states via an accessible Snackbar.
- */
-
 import { useEffect, useState, useRef } from 'react'
 import Box from '@mui/material/Box'
 import Card from '@mui/material/Card'
 import CardContent from '@mui/material/CardContent'
 import Typography from '@mui/material/Typography'
-import Button from '@mui/material/Button'
 import Chip from '@mui/material/Chip'
 import Alert from '@mui/material/Alert'
 import Divider from '@mui/material/Divider'
-import CircularProgress from '@mui/material/CircularProgress'
+import Button from '@mui/material/Button'
 import Paper from '@mui/material/Paper'
 import List from '@mui/material/List'
 import ListItem from '@mui/material/ListItem'
 import ListItemText from '@mui/material/ListItemText'
 import Snackbar from '@mui/material/Snackbar'
 import Grid from '@mui/material/Grid'
-import ArrowBackIcon from '@mui/icons-material/ArrowBack'
-import CheckIcon from '@mui/icons-material/Check'
 import { useNavigate, Navigate } from 'react-router-dom'
 import { useQuoteContext } from '../context/QuoteContext'
 import { ROUTES } from '../utils/routes'
 import { submitQuote } from '../services/api'
+import { StepNavigation, PremiumDisplay } from '../components/common'
 
 export default function StepSummary() {
   const navigate = useNavigate()
@@ -43,13 +32,11 @@ export default function StepSummary() {
   })
 
   useEffect(() => {
-    // Only compute if we have the prerequisites
     if (state.personalInfo && state.coverage) {
       computeAndStorePremium()
     }
   }, [state.personalInfo, state.coverage, computeAndStorePremium])
 
-  // Route Guard: redirect to Step 1 if user lands here directly without data
   if (!state.personalInfo || !state.coverage) {
     return <Navigate to={ROUTES.PERSONAL_INFO} replace />
   }
@@ -66,13 +53,9 @@ export default function StepSummary() {
     try {
       const response = await submitQuote(state)
       setSnackbar({ open: true, message: response.message, severity: 'success' })
-      // Typically we'd navigate to a dedicated success/thank-you view here.
-      // e.g., setTimeout(() => { resetQuote(); void navigate('/thank-you') }, 2000)
     } catch (error) {
       const err = error as Error
       setSnackbar({ open: true, message: err.message, severity: 'error' })
-      // Focus management for accessibility: move focus to the error alert
-      // so screen readers announce the failure immediately.
       setTimeout(() => {
         errorRef.current?.focus()
       }, 0)
@@ -103,35 +86,11 @@ export default function StepSummary() {
           <Divider sx={{ mb: 3 }} />
 
           {state.premium && (
-            <Alert
-              icon={false}
-              severity="success"
-              aria-live="polite"
-              sx={{
-                mb: 4,
-                borderRadius: 1,
-                px: 3,
-                py: 2,
-                '& .MuiAlert-message': { width: '100%' },
-              }}
-            >
-              <Typography variant="subtitle1" fontWeight={700} color="success.dark">
-                Estimated Monthly Premium
-              </Typography>
-              <Typography variant="h3" color="primary.main" fontWeight={800} sx={{ mt: 0.5 }}>
-                ${state.premium.monthlyPremium.toFixed(2)}
-                <Typography component="span" variant="body2" color="text.secondary" sx={{ ml: 1 }}>
-                  / month
-                </Typography>
-              </Typography>
-              <Typography variant="caption" color="text.secondary" sx={{ mt: 0.5, display: 'block' }}>
-                Base: ${state.premium.basePremium.toFixed(2)} · Multipliers:{' '}
-                {Object.entries(state.premium.appliedMultipliers)
-                  .filter(([, v]) => v > 1)
-                  .map(([name, value]) => `${name} (×${String(value)})`)
-                  .join(', ') || 'None applied'}
-              </Typography>
-            </Alert>
+            <PremiumDisplay 
+              monthlyPremium={state.premium.monthlyPremium} 
+              basePremium={state.premium.basePremium} 
+              appliedMultipliers={state.premium.appliedMultipliers} 
+            />
           )}
 
           <Grid container spacing={3} sx={{ mb: 4 }} aria-labelledby="summary-heading">
@@ -190,47 +149,14 @@ export default function StepSummary() {
             </Grid>
           </Grid>
 
-          <Box sx={{ display: 'flex', justifyContent: 'space-between', flexWrap: 'wrap', gap: 2 }}>
-            <Button
-              id="btn-step3-back"
-              variant="outlined"
-              size="large"
-              startIcon={<ArrowBackIcon />}
-              onClick={() => { void navigate(ROUTES.COVERAGE) }}
-              disabled={isSubmitting}
-              aria-label="Go back to coverage selection"
-            >
-              Back
-            </Button>
-
-            <Box sx={{ display: 'flex', gap: 2 }}>
-              <Button
-                id="btn-step3-restart"
-                variant="outlined"
-                color="error"
-                size="large"
-                onClick={handleStartOver}
-                disabled={isSubmitting}
-                aria-label="Start quote over and clear data"
-              >
-                Start Over
-              </Button>
-
-              <Button
-                id="btn-step3-submit"
-                variant="contained"
-                color="primary"
-                size="large"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
-                endIcon={isSubmitting ? undefined : <CheckIcon />}
-                aria-label={isSubmitting ? 'Submitting your quote, please wait' : 'Submit your final quote'}
-                sx={{ minWidth: 160 }}
-              >
-                {isSubmitting ? <CircularProgress size={24} color="inherit" /> : 'Submit Quote'}
-              </Button>
-            </Box>
-          </Box>
+          <StepNavigation 
+            onBack={() => { void navigate(ROUTES.COVERAGE) }} 
+            onNext={handleSubmit}
+            isSubmitting={isSubmitting}
+            isLastStep={true}
+            showReset={true}
+            onReset={handleStartOver}
+          />
         </CardContent>
       </Card>
 
@@ -246,7 +172,7 @@ export default function StepSummary() {
           variant="filled"
           sx={{ width: '100%', borderRadius: 1 }}
           ref={errorRef}
-          tabIndex={-1} // Makes it focusable programmatically for screen reader focus management
+          tabIndex={-1}
           action={
             snackbar.severity === 'error' && (
               <Button color="inherit" size="small" onClick={handleSubmit} aria-label="Retry submitting quote">

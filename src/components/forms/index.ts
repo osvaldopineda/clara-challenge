@@ -1,2 +1,1 @@
-// Barrel export for form components
-// Example: export { default as StepPersonalInfo } from './StepPersonalInfo/StepPersonalInfo'
+export { default as RadioYesNoField } from './RadioYesNoField'

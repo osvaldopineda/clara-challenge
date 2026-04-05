@@ -1,24 +1,3 @@
-/**
- * @file src/components/layout/AppLayout.tsx
- * @description Root layout shell for the Clara Quote Calculator.
- *
- * Structure:
- *   ┌─────────────────────────────────────────┐
- *   │  AppBar  (Clara Onboarding header)       │
- *   ├─────────────────────────────────────────┤
- *   │  FormStepper  (3-step progress bar)      │
- *   ├─────────────────────────────────────────┤
- *   │  <main>                                  │
- *   │    <Container maxWidth="md">             │
- *   │      {children}   ← page content        │
- *   │    </Container>                          │
- *   │  </main>                                 │
- *   └─────────────────────────────────────────┘
- *
- * The layout no longer needs an activeStep prop — FormStepper derives
- * the active step from useLocation (React Router) directly.
- */
-
 import type { ReactNode } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -28,7 +7,6 @@ import Typography from '@mui/material/Typography'
 import Tooltip from '@mui/material/Tooltip'
 import Chip from '@mui/material/Chip'
 import FormStepper from './FormStepper'
-
 function ClaraLogo() {
   return (
     <Box
@@ -40,7 +18,7 @@ function ClaraLogo() {
       }}
       component="span"
     >
-      {/* Geometric shield icon — inline SVG, no external dep */}
+      {}
       <Box
         component="svg"
         viewBox="0 0 32 32"
@@ -65,7 +43,6 @@ function ClaraLogo() {
           strokeLinejoin="round"
         />
       </Box>
-
       <Typography
         variant="h6"
         component="span"
@@ -81,11 +58,9 @@ function ClaraLogo() {
     </Box>
   )
 }
-
 interface AppLayoutProps {
   children: ReactNode
 }
-
 export default function AppLayout({ children }: AppLayoutProps) {
   return (
     <Box
@@ -112,7 +87,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
           }}
         >
           <ClaraLogo />
-
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
             <Tooltip title="Your quote is private and encrypted" arrow placement="bottom">
               <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, cursor: 'default' }}>
@@ -150,7 +124,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
                 </Typography>
               </Box>
             </Tooltip>
-
             <Chip
               label="No commitment"
               size="small"
@@ -167,9 +140,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           </Box>
         </Toolbar>
       </AppBar>
-
       <FormStepper />
-
       <Box
         component="main"
         sx={{
@@ -189,7 +160,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
           {children}
         </Container>
       </Box>
-
       <Box
         component="footer"
         sx={{

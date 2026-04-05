@@ -1,84 +1,49 @@
-/**
- * @file src/theme/index.ts
- * @description Clara's custom MUI v6 theme — Enterprise Fintech Standard.
- *
- * Palette rationale:
- *  - Primary  (#1B3A6B) — Deep Navy: conveys trust, stability, and authority
- *    appropriate for an insurance product.
- *  - Secondary (#0097A7) — Teal: accent for active step indicators and
- *    informational chips; maintains WCAG AA contrast on white.
- *  - Background surfaces use a soft grey (#F5F7FA) to lift cards off the
- *    page without introducing heavy visual noise.
- *
- * Typography:
- *  - "Inter" (Google Fonts) — humanist sans-serif designed for screen
- *    legibility; the standard choice for form-heavy, data-dense UIs.
- *
- * Design constraints (Fintech Standard):
- *  - All radii are 4px — sharp corners signal precision and formality.
- *  - Shadows are deliberately minimal (max 2px blur) — no depth theatre.
- *  - Buttons have no lift, transform, or glow on hover — static is trustworthy.
- *  - No gradients in any component override; solid colours only.
- */
-
 import { createTheme } from '@mui/material/styles'
 import type { ThemeOptions } from '@mui/material/styles'
-
-const CLARA_NAVY      = '#1B3A6B'
+const CLARA_NAVY = '#1B3A6B'
 const CLARA_NAVY_LIGHT = '#2A5298'
-const CLARA_NAVY_DARK  = '#112447'
-
-const CLARA_TEAL      = '#0097A7'
+const CLARA_NAVY_DARK = '#112447'
+const CLARA_TEAL = '#0097A7'
 const CLARA_TEAL_LIGHT = '#26C6DA'
-const CLARA_TEAL_DARK  = '#006978'
-
+const CLARA_TEAL_DARK = '#006978'
 const SURFACE_BG = '#F5F7FA'
-const PAPER_BG   = '#FFFFFF'
-
+const PAPER_BG = '#FFFFFF'
 const themeOptions: ThemeOptions = {
   palette: {
     mode: 'light',
-
     primary: {
       main: CLARA_NAVY,
       light: CLARA_NAVY_LIGHT,
       dark: CLARA_NAVY_DARK,
       contrastText: '#FFFFFF',
     },
-
     secondary: {
       main: CLARA_TEAL,
       light: CLARA_TEAL_LIGHT,
       dark: CLARA_TEAL_DARK,
       contrastText: '#FFFFFF',
     },
-
     background: {
       default: SURFACE_BG,
       paper: PAPER_BG,
     },
-
     text: {
       primary: '#1A2138',
       secondary: '#4A5568',
       disabled: '#A0AEC0',
     },
-
     error: {
       main: '#C62828',
       light: '#EF9A9A',
       dark: '#8E0000',
     },
-
     success: {
       main: '#2E7D32',
       light: '#A5D6A7',
       dark: '#1B5E20',
     },
-
     divider: '#E2E8F0',
   },
-
   typography: {
     fontFamily: [
       'Inter',
@@ -88,7 +53,6 @@ const themeOptions: ThemeOptions = {
       'Roboto',
       'sans-serif',
     ].join(','),
-
     h1: {
       fontSize: '2rem',
       fontWeight: 700,
@@ -146,13 +110,9 @@ const themeOptions: ThemeOptions = {
       color: '#4A5568',
     },
   },
-
-  // 4px globally — sharp, precise, institutional
   shape: {
     borderRadius: 4,
   },
-
-  // Flat shadow scale: maximum 2px spread, no heavy depth
   shadows: [
     'none',
     '0px 1px 2px rgba(0,0,0,0.06)',
@@ -160,23 +120,18 @@ const themeOptions: ThemeOptions = {
     '0px 2px 4px rgba(0,0,0,0.08)',
     '0px 2px 6px rgba(0,0,0,0.10)',
     '0px 2px 8px rgba(0,0,0,0.10)',
-    // MUI requires 25 shadow values — remainder use the same restrained value
     ...Array<string>(19).fill('0px 2px 8px rgba(0,0,0,0.10)'),
   ] as ThemeOptions['shadows'],
-
   components: {
     MuiCssBaseline: {
       styleOverrides: `
         @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
-
         *, *::before, *::after {
           box-sizing: border-box;
         }
-
         body {
           background-color: ${SURFACE_BG};
         }
-
         #root {
           min-height: 100vh;
           display: flex;
@@ -184,7 +139,6 @@ const themeOptions: ThemeOptions = {
         }
       `,
     },
-
     MuiButton: {
       defaultProps: {
         disableElevation: true,
@@ -198,7 +152,6 @@ const themeOptions: ThemeOptions = {
           paddingLeft: 24,
           paddingRight: 24,
           fontSize: '0.9375rem',
-          // No transform, no glow — interactions are communicated via colour only
           transition: 'background-color 0.15s ease, border-color 0.15s ease',
         },
         containedPrimary: {
@@ -214,7 +167,6 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
-
     MuiPaper: {
       defaultProps: { elevation: 0 },
       styleOverrides: {
@@ -224,7 +176,6 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
-
     MuiCard: {
       styleOverrides: {
         root: {
@@ -233,7 +184,6 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
-
     MuiTextField: {
       defaultProps: {
         variant: 'outlined',
@@ -241,7 +191,6 @@ const themeOptions: ThemeOptions = {
         size: 'medium',
       },
     },
-
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
@@ -259,14 +208,12 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
-
     MuiStepIcon: {
       styleOverrides: {
         root: {
           color: '#CBD5E0',
           '&.Mui-active': {
             color: CLARA_NAVY,
-            // No glow — active state is communicated solely by colour
           },
           '&.Mui-completed': {
             color: CLARA_TEAL,
@@ -278,7 +225,6 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
-
     MuiStepLabel: {
       styleOverrides: {
         label: {
@@ -294,7 +240,6 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
-
     MuiStepConnector: {
       styleOverrides: {
         line: {
@@ -303,7 +248,6 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
-
     MuiChip: {
       styleOverrides: {
         root: {
@@ -312,7 +256,6 @@ const themeOptions: ThemeOptions = {
         },
       },
     },
-
     MuiLinearProgress: {
       styleOverrides: {
         root: {
@@ -327,7 +270,5 @@ const themeOptions: ThemeOptions = {
     },
   },
 }
-
 const claraTheme = createTheme(themeOptions)
-
 export default claraTheme
