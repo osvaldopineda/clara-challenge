@@ -20,6 +20,14 @@ import { submitQuote } from '../services/api'
 import { StepNavigation, PremiumDisplay } from '../components/common'
 import { SENIOR_AGE_THRESHOLD } from '../utils/premiumCalculator'
 
+const CONDITION_LABELS: Record<string, string> = {
+  diabetes: 'Diabetes',
+  heart_disease: 'Heart Disease',
+  hypertension: 'Hypertension',
+  cancer_history: 'Cancer History',
+  other: 'Other',
+}
+
 export default function StepSummary() {
   const navigate = useNavigate()
   const { state, computeAndStorePremium, resetQuote } = useQuoteContext()
@@ -168,7 +176,9 @@ export default function StepSummary() {
                           primary="Pre-existing Conditions"
                           secondary={
                             state.coverage.preExistingConditions.length > 0
-                              ? state.coverage.preExistingConditions.join(', ')
+                              ? state.coverage.preExistingConditions
+                                  .map((c) => CONDITION_LABELS[c] || c)
+                                  .join(', ')
                               : 'None'
                           }
                         />

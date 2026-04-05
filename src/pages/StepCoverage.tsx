@@ -57,7 +57,7 @@ export default function StepCoverage() {
     formState: { errors, isSubmitting },
   } = methods
 
-  const formValues = useWatch({ control })
+  const formValues = useWatch<CoverageFormValues>({ control })
   const livePremium = useLivePremium(age, formValues)
 
   if (!state.personalInfo) {
@@ -73,7 +73,7 @@ export default function StepCoverage() {
           : [],
       takesPrescriptionMedication: isSenior && data.takesPrescriptionMedication === 'true',
       usesTobacco: isSenior && data.usesTobacco === 'true',
-      includesSpouse: isSenior && data.includesSpouse === 'true',
+      includesSpouse: data.includesSpouse === 'true',
     }
 
     dispatch({ type: 'SET_COVERAGE', payload: coveragePayload })
