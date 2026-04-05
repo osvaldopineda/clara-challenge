@@ -89,16 +89,17 @@ const QuoteContext = createContext<QuoteContextValue | null>(null)
 interface QuoteProviderProps {
   children: ReactNode
 }
+function initQuoteState(initial: QuoteState): QuoteState {
+  const saved = readFromStorage()
+  return {
+    ...initial,
+    personalInfo: saved.personalInfo ?? null,
+    coverage: saved.coverage ?? null,
+  }
+}
+
 export function QuoteProvider({ children }: QuoteProviderProps) {
-  const hydratedInitial: QuoteState = (() => {
-    const saved = readFromStorage()
-    return {
-      ...INITIAL_STATE,
-      personalInfo: saved.personalInfo ?? null,
-      coverage: saved.coverage ?? null,
-    }
-  })()
-  const [state, dispatch] = useReducer(quoteReducer, hydratedInitial)
+  const [state, dispatch] = useReducer(quoteReducer, INITIAL_STATE, initQuoteState)
   useEffect(() => {
     if (state.personalInfo === null && state.coverage === null) {
       clearStorage()
