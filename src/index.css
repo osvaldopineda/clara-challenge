@@ -5,6 +5,8 @@
  * through the MUI theme live here.
  */
 
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
 /* Smooth scrolling for the whole page */
 html {
   scroll-behavior: smooth;
