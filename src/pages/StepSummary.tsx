@@ -172,7 +172,14 @@ export default function StepSummary() {
           tabIndex={-1}
           action={
             snackbar.severity === 'error' && (
-              <Button color="error" size="small" onClick={handleSubmit} aria-label="Retry submitting quote">
+              <Button
+                color="inherit"
+                size="small"
+                variant="outlined"
+                sx={{ px: 2, py: 0.5, textTransform: 'uppercase', fontWeight: 600 }}
+                onClick={handleSubmit}
+                aria-label="Retry submitting quote"
+              >
                 RETRY
               </Button>
             )
