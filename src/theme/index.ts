@@ -1,26 +1,27 @@
 import { createTheme } from '@mui/material/styles'
 import type { ThemeOptions } from '@mui/material/styles'
-const CLARA_NAVY = '#0D52FF'
-const CLARA_NAVY_LIGHT = '#3B71FF'
-const CLARA_NAVY_DARK = '#04142A'
-const CLARA_TEAL = '#0097A7'
-const CLARA_TEAL_LIGHT = '#26C6DA'
-const CLARA_TEAL_DARK = '#006978'
-const SURFACE_BG = '#F8F9FA'
-const PAPER_BG = '#FFFFFF'
+
+const BRAND_ACTION = '#011d5fff' 
+const BRAND_ACTION_HOVER = '#022880ff' 
+const BRAND_DARK = '#0F172A' 
+const BRAND_SUCCESS = '#10B981' 
+const SURFACE_BG = '#F8FAFC' 
+const PAPER_BG = '#FFFFFF' 
+const TEXT_MAIN = '#0F172A' 
+const TEXT_MUTED = '#64748B' 
+const BORDER_COLOR = '#E2E8F0' 
+
 const themeOptions: ThemeOptions = {
   palette: {
     mode: 'light',
     primary: {
-      main: CLARA_NAVY,
-      light: CLARA_NAVY_LIGHT,
-      dark: CLARA_NAVY_DARK,
+      main: BRAND_ACTION,
+      dark: BRAND_DARK,
+      light: BRAND_ACTION_HOVER,
       contrastText: '#FFFFFF',
     },
     secondary: {
-      main: CLARA_TEAL,
-      light: CLARA_TEAL_LIGHT,
-      dark: CLARA_TEAL_DARK,
+      main: BRAND_SUCCESS,
       contrastText: '#FFFFFF',
     },
     background: {
@@ -28,21 +29,16 @@ const themeOptions: ThemeOptions = {
       paper: PAPER_BG,
     },
     text: {
-      primary: '#1A2138',
-      secondary: '#4A5568',
-      disabled: '#A0AEC0',
+      primary: TEXT_MAIN,
+      secondary: TEXT_MUTED,
     },
+    divider: BORDER_COLOR,
     error: {
-      main: '#C62828',
-      light: '#EF9A9A',
-      dark: '#8E0000',
+      main: '#DC2626',
     },
     success: {
-      main: '#2E7D32',
-      light: '#A5D6A7',
-      dark: '#1B5E20',
+      main: BRAND_SUCCESS,
     },
-    divider: '#E2E8F0',
   },
   typography: {
     fontFamily: [
@@ -53,62 +49,18 @@ const themeOptions: ThemeOptions = {
       'Roboto',
       'sans-serif',
     ].join(','),
-    h1: {
-      fontSize: '2rem',
-      fontWeight: 700,
-      letterSpacing: '-0.025em',
-      lineHeight: 1.2,
-    },
-    h2: {
-      fontSize: '1.5rem',
-      fontWeight: 600,
-      letterSpacing: '-0.02em',
-      lineHeight: 1.3,
-    },
-    h3: {
-      fontSize: '1.25rem',
-      fontWeight: 600,
-      letterSpacing: '-0.015em',
-    },
-    h4: {
-      fontSize: '1.125rem',
-      fontWeight: 600,
-    },
-    h5: {
-      fontSize: '1rem',
-      fontWeight: 600,
-    },
-    h6: {
-      fontSize: '0.875rem',
-      fontWeight: 600,
-    },
-    subtitle1: {
-      fontSize: '1rem',
-      fontWeight: 500,
-      lineHeight: 1.5,
-    },
-    subtitle2: {
-      fontSize: '0.875rem',
-      fontWeight: 500,
-      color: '#4A5568',
-    },
-    body1: {
-      fontSize: '1rem',
-      lineHeight: 1.6,
-    },
-    body2: {
-      fontSize: '0.875rem',
-      lineHeight: 1.57,
-    },
-    button: {
-      textTransform: 'none',
-      fontWeight: 600,
-      letterSpacing: '0.01em',
-    },
-    caption: {
-      fontSize: '0.75rem',
-      color: '#4A5568',
-    },
+    h1: { fontSize: '2rem', fontWeight: 700, letterSpacing: '-0.025em', lineHeight: 1.2 },
+    h2: { fontSize: '1.5rem', fontWeight: 600, letterSpacing: '-0.02em', lineHeight: 1.3 },
+    h3: { fontSize: '1.25rem', fontWeight: 600, letterSpacing: '-0.015em' },
+    h4: { fontSize: '1.125rem', fontWeight: 600 },
+    h5: { fontSize: '1rem', fontWeight: 600 },
+    h6: { fontSize: '0.875rem', fontWeight: 600 },
+    subtitle1: { fontSize: '1rem', fontWeight: 500, lineHeight: 1.5 },
+    subtitle2: { fontSize: '0.875rem', fontWeight: 500, color: TEXT_MUTED },
+    body1: { fontSize: '1rem', lineHeight: 1.6 },
+    body2: { fontSize: '0.875rem', lineHeight: 1.57 },
+    button: { textTransform: 'none', fontWeight: 600, letterSpacing: '0.01em' },
+    caption: { fontSize: '0.75rem', color: TEXT_MUTED },
   },
   shape: {
     borderRadius: 4,
@@ -156,7 +108,7 @@ const themeOptions: ThemeOptions = {
         },
         containedPrimary: {
           '&:hover': {
-            backgroundColor: CLARA_NAVY_LIGHT,
+            backgroundColor: BRAND_ACTION_HOVER,
           },
         },
         outlinedPrimary: {
@@ -172,7 +124,7 @@ const themeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           backgroundImage: 'none',
-          border: '1px solid #E2E8F0',
+          border: `1px solid ${BORDER_COLOR}`,
         },
       },
     },
@@ -180,7 +132,7 @@ const themeOptions: ThemeOptions = {
       styleOverrides: {
         root: {
           borderRadius: 4,
-          border: '1px solid #E2E8F0',
+          border: `1px solid ${BORDER_COLOR}`,
         },
       },
     },
@@ -189,18 +141,20 @@ const themeOptions: ThemeOptions = {
         variant: 'outlined',
         fullWidth: true,
         size: 'medium',
+        color: 'primary',
       },
     },
     MuiOutlinedInput: {
       styleOverrides: {
         root: {
           borderRadius: 4,
-          backgroundColor: '#FFFFFF',
+          backgroundColor: PAPER_BG,
           '&:hover .MuiOutlinedInput-notchedOutline': {
-            borderColor: CLARA_NAVY_LIGHT,
+            borderColor: BRAND_ACTION_HOVER,
           },
           '&.Mui-focused .MuiOutlinedInput-notchedOutline': {
             borderWidth: 2,
+            borderColor: BRAND_ACTION,
           },
         },
         notchedOutline: {
@@ -213,10 +167,10 @@ const themeOptions: ThemeOptions = {
         root: {
           color: '#CBD5E0',
           '&.Mui-active': {
-            color: CLARA_NAVY,
+            color: BRAND_ACTION,
           },
           '&.Mui-completed': {
-            color: CLARA_TEAL,
+            color: BRAND_SUCCESS,
           },
         },
         text: {
@@ -230,12 +184,13 @@ const themeOptions: ThemeOptions = {
         label: {
           fontSize: '0.8125rem',
           fontWeight: 500,
+          color: TEXT_MUTED,
           '&.Mui-active': {
             fontWeight: 700,
-            color: CLARA_NAVY,
+            color: BRAND_ACTION,
           },
           '&.Mui-completed': {
-            color: CLARA_TEAL,
+            color: BRAND_SUCCESS,
           },
         },
       },
@@ -244,7 +199,7 @@ const themeOptions: ThemeOptions = {
       styleOverrides: {
         line: {
           borderTopWidth: 2,
-          borderColor: '#E2E8F0',
+          borderColor: BORDER_COLOR,
         },
       },
     },
@@ -261,7 +216,7 @@ const themeOptions: ThemeOptions = {
         root: {
           borderRadius: 2,
           height: 4,
-          backgroundColor: '#E2E8F0',
+          backgroundColor: BORDER_COLOR,
         },
         bar: {
           borderRadius: 2,
