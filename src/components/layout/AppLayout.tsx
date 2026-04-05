@@ -4,8 +4,6 @@ import Box from '@mui/material/Box'
 import Container from '@mui/material/Container'
 import Toolbar from '@mui/material/Toolbar'
 import Typography from '@mui/material/Typography'
-import Tooltip from '@mui/material/Tooltip'
-import Chip from '@mui/material/Chip'
 import FormStepper from './FormStepper'
 function ClaraLogo() {
   return (
@@ -18,7 +16,6 @@ function ClaraLogo() {
       }}
       component="span"
     >
-      {}
       <Box
         component="svg"
         viewBox="0 0 32 32"
@@ -87,57 +84,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
           }}
         >
           <ClaraLogo />
-          <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
-            <Tooltip title="Your quote is private and encrypted" arrow placement="bottom">
-              <Box sx={{ display: 'flex', alignItems: 'center', gap: 0.75, cursor: 'default' }}>
-                <Box
-                  component="svg"
-                  viewBox="0 0 20 20"
-                  fill="none"
-                  xmlns="http://www.w3.org/2000/svg"
-                  sx={{ width: 16, height: 16, opacity: 0.75 }}
-                  aria-hidden="true"
-                >
-                  <path
-                    d="M10 1L3 4.5V10C3 14.1 6.1 17.9 10 19C13.9 17.9 17 14.1 17 10V4.5L10 1Z"
-                    stroke="rgba(255,255,255,0.75)"
-                    strokeWidth="1.4"
-                    strokeLinejoin="round"
-                  />
-                  <path
-                    d="M7.5 10.5L9 12L12.5 8.5"
-                    stroke="rgba(255,255,255,0.75)"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </Box>
-                <Typography
-                  variant="caption"
-                  sx={{
-                    color: 'rgba(255,255,255,0.7)',
-                    fontWeight: 500,
-                    display: { xs: 'none', sm: 'block' },
-                  }}
-                >
-                  Secure Quote
-                </Typography>
-              </Box>
-            </Tooltip>
-            <Chip
-              label="No commitment"
-              size="small"
-              sx={{
-                backgroundColor: 'rgba(255,255,255,0.12)',
-                color: 'rgba(255,255,255,0.85)',
-                fontWeight: 600,
-                fontSize: '0.7rem',
-                height: 24,
-                border: '1px solid rgba(255,255,255,0.2)',
-                display: { xs: 'none', md: 'flex' },
-              }}
-            />
-          </Box>
+
         </Toolbar>
       </AppBar>
       <FormStepper />

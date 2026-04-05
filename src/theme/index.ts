@@ -1,12 +1,12 @@
 import { createTheme } from '@mui/material/styles'
 import type { ThemeOptions } from '@mui/material/styles'
-const CLARA_NAVY = '#1B3A6B'
-const CLARA_NAVY_LIGHT = '#2A5298'
-const CLARA_NAVY_DARK = '#112447'
+const CLARA_NAVY = '#0D52FF'
+const CLARA_NAVY_LIGHT = '#3B71FF'
+const CLARA_NAVY_DARK = '#04142A'
 const CLARA_TEAL = '#0097A7'
 const CLARA_TEAL_LIGHT = '#26C6DA'
 const CLARA_TEAL_DARK = '#006978'
-const SURFACE_BG = '#F5F7FA'
+const SURFACE_BG = '#F8F9FA'
 const PAPER_BG = '#FFFFFF'
 const themeOptions: ThemeOptions = {
   palette: {
