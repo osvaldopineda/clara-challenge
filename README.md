@@ -10,8 +10,9 @@
 1. [Setup Instructions](#setup-instructions)
 2. [Available Scripts](#available-scripts)
 3. [Architecture & Decisions](#architecture--decisions)
-4. [Business Logic & Testing Strategy](#business-logic--testing-strategy)
-5. [Folder Structure](#folder-structure)
+4. [Development Process](#development-process)
+5. [Business Logic & Testing Strategy](#business-logic--testing-strategy)
+6. [Folder Structure](#folder-structure)
 
 ---
 
@@ -137,6 +138,19 @@ Used for declarative, nested routing between wizard steps. Each step is a distin
 ### 🆔 uuid
 
 Deterministic ID generation for dynamic form fields, quote sessions, and list-rendering keys. Using `uuid v4` (random) avoids collisions in client-generated sessions without a backend round-trip.
+
+---
+
+## Development Process
+
+This project was executed following a structured modular approach to ensure scalability and mathematical precision:
+
+1.  **Logic-First Scaffolding**: Before any UI was built, the `premiumCalculator.ts` was implemented and rigorously tested with Vitest. This ensured the "brain" of the app was 100% accurate (validated against the $327.60 canonical example) and independent of any React lifecycle.
+2.  **Domain & Type Definition**: Defined strict TypeScript interfaces for `QuoteState` and Step models to prevent data drift between the Wizard steps.
+3.  **State Management Design**: Chose `useReducer` with **Lazy Initialization** to handle complex transitions while keeping `localStorage` I/O decoupled from the main render thread.
+4.  **UI/UX Implementation**: Built the forms using Material UI, leveraging **React Hook Form** for performance (uncontrolled inputs) and **Yup** for schema-based validation.
+5.  **Refinement & Optimization**: Implemented **Route-based Code Splitting** and **Atomic Persistence** to produce a bundle that is both fast and resilient to page refreshes.
+6.  **Sanitization & QA**: Final phase focused on sanitizing UI labels (transforming raw data into human-readable strings) and enforcing legal compliance (18+ age floor).
 
 ---
 
