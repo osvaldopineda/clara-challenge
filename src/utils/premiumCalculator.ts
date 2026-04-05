@@ -35,7 +35,7 @@ export function calculatePremium(data: PremiumInput): PremiumResult {
     throw new RangeError(`Age must be a non-negative number, received: ${String(age)}`)
   }
   if (!(coverageTier in BASE_PREMIUMS)) {
-    throw new TypeError(`Unknown coverage tier: "${String(coverageTier)}"`)
+    throw new TypeError(`Unknown coverage tier: "${coverageTier}"`)
   }
   const basePremium = BASE_PREMIUMS[coverageTier]
   const ageMultiplier = age > SENIOR_AGE_THRESHOLD ? MULTIPLIERS.senior : MULTIPLIERS.none

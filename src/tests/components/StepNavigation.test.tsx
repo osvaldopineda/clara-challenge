@@ -10,7 +10,7 @@ describe('StepNavigation', () => {
     expect(screen.queryByRole('button', { name: /Back/i })).not.toBeInTheDocument()
     const nextBtn = screen.getByRole('button', { name: /Next Step/i })
     expect(nextBtn).toBeInTheDocument()
-    
+
     fireEvent.click(nextBtn)
     expect(onNext).toHaveBeenCalledTimes(1)
   })
@@ -21,7 +21,7 @@ describe('StepNavigation', () => {
 
     const backBtn = screen.getByRole('button', { name: /Back/i })
     expect(backBtn).toBeInTheDocument()
-    
+
     fireEvent.click(backBtn)
     expect(onBack).toHaveBeenCalledTimes(1)
   })
@@ -29,11 +29,11 @@ describe('StepNavigation', () => {
   it('shows submit button on last step and supports start over', () => {
     const onNext = vi.fn()
     const onReset = vi.fn()
-    
+
     render(<StepNavigation onNext={onNext} isLastStep={true} showReset={true} onReset={onReset} />)
 
     expect(screen.getByRole('button', { name: /Submit Quote/i })).toBeInTheDocument()
-    
+
     const resetBtn = screen.getByRole('button', { name: /Start Over/i })
     expect(resetBtn).toBeInTheDocument()
     fireEvent.click(resetBtn)

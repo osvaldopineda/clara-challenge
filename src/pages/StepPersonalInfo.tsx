@@ -30,24 +30,22 @@ export default function StepPersonalInfo() {
 
   return (
     <Card sx={{ overflow: 'hidden' }}>
-      <Box sx={{ height: 3, backgroundColor: 'primary.main' }} />
-
       <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
         <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-          <Typography variant="h2" component="h1" color="primary.main">
+          <Typography color="primary.dark" variant="h2" component="h1">
             Personal Information
           </Typography>
           <Chip label="Step 1 of 3" size="small" color="primary" sx={{ fontWeight: 700 }} />
         </Box>
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
-          We need a few details to generate your personalised quote. All information is
-          kept strictly confidential.
+          We need a few details to generate your personalised quote. All information is kept
+          strictly confidential.
         </Typography>
 
         <Divider sx={{ mb: 3 }} />
 
-        <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+        <Box component="form" onSubmit={(e) => void handleSubmit(onSubmit)(e)} noValidate>
           <Box
             sx={{
               display: 'grid',
@@ -108,7 +106,7 @@ export default function StepPersonalInfo() {
                   {...field}
                   type="number"
                   label="Age"
-                  inputProps={{ min: 0 }}
+                  slotProps={{ htmlInput: { min: 0 } }}
                   error={!!errors.age}
                   helperText={errors.age?.message}
                   fullWidth

@@ -4,7 +4,13 @@ import { useForm, FormProvider } from 'react-hook-form'
 import { RadioYesNoField } from '../../components/forms'
 import userEvent from '@testing-library/user-event'
 
-const Wrapper = ({ children, defaultValues = {} }: any) => {
+const Wrapper = ({
+  children,
+  defaultValues = {},
+}: {
+  children: React.ReactNode
+  defaultValues?: NonNullable<unknown>
+}) => {
   const methods = useForm({ defaultValues })
   return <FormProvider {...methods}>{children}</FormProvider>
 }
@@ -31,18 +37,18 @@ describe('RadioYesNoField', () => {
       </Wrapper>,
     )
 
-    const yesRadio = screen.getByLabelText('Yes') as HTMLInputElement
-    const noRadio = screen.getByLabelText('No') as HTMLInputElement
+    const yesRadio = screen.getByLabelText('Yes')
+    const noRadio = screen.getByLabelText('No')
 
-    expect(yesRadio.checked).toBe(false)
-    expect(noRadio.checked).toBe(false)
+    expect(yesRadio).not.toBeChecked()
+    expect(noRadio).not.toBeChecked()
 
     await user.click(yesRadio)
-    expect(yesRadio.checked).toBe(true)
-    expect(noRadio.checked).toBe(false)
+    expect(yesRadio).toBeChecked()
+    expect(noRadio).not.toBeChecked()
 
     await user.click(noRadio)
-    expect(noRadio.checked).toBe(true)
-    expect(yesRadio.checked).toBe(false)
+    expect(noRadio).toBeChecked()
+    expect(yesRadio).not.toBeChecked()
   })
 })

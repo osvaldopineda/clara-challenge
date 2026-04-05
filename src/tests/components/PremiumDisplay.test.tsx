@@ -14,9 +14,11 @@ describe('PremiumDisplay', () => {
 
   it('renders active multipliers properly', () => {
     const multipliers = { age: 1.5, tobacco: 1.2, nothing: 1.0 }
-    render(<PremiumDisplay monthlyPremium={180} basePremium={100} appliedMultipliers={multipliers} />)
+    render(
+      <PremiumDisplay monthlyPremium={180} basePremium={100} appliedMultipliers={multipliers} />,
+    )
 
-    expect(screen.getByText(/age \(×1\.5\), tobacco \(×1\.2\)/i)).toBeInTheDocument()
+    expect(screen.getByText(/age: 1\.5x, tobacco: 1\.2x/i)).toBeInTheDocument()
     expect(screen.queryByText(/nothing/)).not.toBeInTheDocument()
   })
 })

@@ -7,7 +7,11 @@ interface PremiumDisplayProps {
   appliedMultipliers?: Record<string, number>
 }
 
-export default function PremiumDisplay({ monthlyPremium, basePremium, appliedMultipliers = {} }: PremiumDisplayProps) {
+export default function PremiumDisplay({
+  monthlyPremium,
+  basePremium,
+  appliedMultipliers = {},
+}: PremiumDisplayProps) {
   return (
     <Alert
       icon={false}
@@ -34,7 +38,7 @@ export default function PremiumDisplay({ monthlyPremium, basePremium, appliedMul
         Base: ${basePremium.toFixed(2)} · Multipliers:{' '}
         {Object.entries(appliedMultipliers)
           .filter(([, v]) => v > 1)
-          .map(([name, value]) => `${name}: ${value}x`)
+          .map(([name, value]) => `${name}: ${String(value)}x`)
           .join(', ') || 'None applied'}
       </Typography>
     </Alert>

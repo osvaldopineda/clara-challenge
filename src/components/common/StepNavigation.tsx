@@ -35,7 +35,7 @@ export default function StepNavigation({
           Back
         </Button>
       ) : (
-        <Box /> // flex spacer layout 
+        <Box /> // flex spacer layout
       )}
 
       <Box sx={{ display: 'flex', gap: 2 }}>

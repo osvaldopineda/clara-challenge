@@ -30,18 +30,22 @@ export default function StepCoverage() {
   const navigate = useNavigate()
   const { state, dispatch } = useQuoteContext()
 
-  if (!state.personalInfo) {
-    return <Navigate to={ROUTES.PERSONAL_INFO} replace />
-  }
-
-  const age = state.personalInfo.age
+  const age = state.personalInfo?.age || 0
   const isSenior = age > SENIOR_AGE_THRESHOLD
 
   const defaultValues: CoverageFormValues = {
     coverageType: state.coverage?.coverageType || '',
-    hasPreExisting: state.coverage ? (state.coverage.preExistingConditions.length > 0 ? 'true' : 'false') : '',
+    hasPreExisting: state.coverage
+      ? state.coverage.preExistingConditions.length > 0
+        ? 'true'
+        : 'false'
+      : '',
     preExistingConditions: state.coverage?.preExistingConditions || [],
-    takesPrescriptionMedication: state.coverage ? (state.coverage.takesPrescriptionMedication ? 'true' : 'false') : '',
+    takesPrescriptionMedication: state.coverage
+      ? state.coverage.takesPrescriptionMedication
+        ? 'true'
+        : 'false'
+      : '',
     usesTobacco: state.coverage ? (state.coverage.usesTobacco ? 'true' : 'false') : '',
     includesSpouse: state.coverage ? (state.coverage.includesSpouse ? 'true' : 'false') : '',
   }
@@ -55,6 +59,10 @@ export default function StepCoverage() {
 
   const formValues = useWatch({ control })
   const livePremium = useLivePremium(age, formValues)
+
+  if (!state.personalInfo) {
+    return <Navigate to={ROUTES.PERSONAL_INFO} replace />
+  }
 
   const onSubmit = (data: CoverageFormValues) => {
     const coveragePayload: CoverageStep = {
@@ -83,12 +91,19 @@ export default function StepCoverage() {
 
   return (
     <Card sx={{ overflow: 'hidden' }}>
-      <Box sx={{ height: 3, backgroundColor: 'primary.main' }} />
-
       <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
-        <Box sx={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', mb: 1, gap: 2 }}>
+        <Box
+          sx={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            flexWrap: 'wrap',
+            mb: 1,
+            gap: 2,
+          }}
+        >
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5 }}>
-            <Typography variant="h2" component="h1" color="primary.main">
+            <Typography variant="h2" component="h1">
               Coverage Selection
             </Typography>
             <Chip label="Step 2 of 3" size="small" color="primary" sx={{ fontWeight: 700 }} />
@@ -106,31 +121,52 @@ export default function StepCoverage() {
 
         <Typography variant="body2" color="text.secondary" sx={{ mb: 3 }}>
           Choose the coverage tier that best fits your needs.
-          {isSenior && ' Since you are over 65, we need to ask a few additional health questions to refine your estimate.'}
+          {isSenior &&
+            ' Since you are over 65, we need to ask a few additional health questions to refine your estimate.'}
         </Typography>
 
         <Divider sx={{ mb: 3 }} />
 
         <FormProvider {...methods}>
-          <Box component="form" onSubmit={handleSubmit(onSubmit)} noValidate>
+          <Box component="form" onSubmit={(e) => void handleSubmit(onSubmit)(e)} noValidate>
             <Controller
               name="coverageType"
               control={control}
               render={({ field }) => (
-                <FormControl error={!!errors.coverageType} component="fieldset" fullWidth sx={{ mb: 4 }}>
-                  <FormLabel component="legend" sx={{ color: 'text.primary', fontWeight: 600, mb: 2 }}>
+                <FormControl
+                  error={!!errors.coverageType}
+                  component="fieldset"
+                  fullWidth
+                  sx={{ mb: 4 }}
+                >
+                  <FormLabel
+                    component="legend"
+                    sx={{ color: 'text.primary', fontWeight: 600, mb: 2 }}
+                  >
                     Selected Coverage Tier
                   </FormLabel>
-                  <RadioGroup {...field} sx={{ display: 'grid', gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' }, gap: 2 }}>
+                  <RadioGroup
+                    {...field}
+                    sx={{
+                      display: 'grid',
+                      gridTemplateColumns: { xs: '1fr', sm: '1fr 1fr 1fr' },
+                      gap: 2,
+                    }}
+                  >
                     {[
                       { value: CoverageType.Basic, label: 'Basic', desc: '$50 base / mo' },
                       { value: CoverageType.Standard, label: 'Standard', desc: '$100 base / mo' },
                       { value: CoverageType.Premium, label: 'Premium', desc: '$200 base / mo' },
                     ].map((tier) => (
-                      <Card key={tier.value} variant="outlined" sx={{
-                        borderColor: field.value === tier.value ? 'primary.main' : 'divider',
-                        backgroundColor: field.value === tier.value ? 'rgba(27, 58, 107, 0.04)' : 'transparent',
-                      }}>
+                      <Card
+                        key={tier.value}
+                        variant="outlined"
+                        sx={{
+                          borderColor: field.value === tier.value ? 'primary.main' : 'divider',
+                          backgroundColor:
+                            field.value === tier.value ? 'rgba(27, 58, 107, 0.04)' : 'transparent',
+                        }}
+                      >
                         <CardContent sx={{ p: '16px !important', textAlign: 'center' }}>
                           <FormControlLabel
                             value={tier.value}
@@ -138,31 +174,56 @@ export default function StepCoverage() {
                             label={<Typography fontWeight={600}>{tier.label}</Typography>}
                             sx={{ m: 0 }}
                           />
-                          <Typography variant="body2" color="text.secondary" mt={1}>{tier.desc}</Typography>
+                          <Typography variant="body2" color="text.secondary" mt={1}>
+                            {tier.desc}
+                          </Typography>
                         </CardContent>
                       </Card>
                     ))}
                   </RadioGroup>
-                  {errors.coverageType && <FormHelperText sx={{ mt: 2 }}>{errors.coverageType.message as string}</FormHelperText>}
+                  {errors.coverageType && (
+                    <FormHelperText sx={{ mt: 2 }}>
+                      {errors.coverageType.message as string}
+                    </FormHelperText>
+                  )}
                 </FormControl>
               )}
             />
 
             {isSenior && (
-              <Box sx={{ p: 3, pt: 4, borderRadius: 1, border: '1px solid', borderColor: 'divider', backgroundColor: 'background.default', mb: 4 }}>
-                <Typography variant="h4" color="primary.main" mb={1}>Additional Health Details</Typography>
+              <Box
+                sx={{
+                  p: 3,
+                  pt: 4,
+                  borderRadius: 1,
+                  border: '1px solid',
+                  borderColor: 'divider',
+                  backgroundColor: 'background.default',
+                  mb: 4,
+                }}
+              >
+                <Typography variant="h4" color="primary.main" mb={1}>
+                  Additional Health Details
+                </Typography>
                 <Typography variant="body2" color="text.secondary" mb={3}>
                   Please answer the following questions to help us calculate the most accurate rate.
                 </Typography>
 
-                <RadioYesNoField name="hasPreExisting" label="Do you have any pre-existing medical conditions?" />
+                <RadioYesNoField
+                  name="hasPreExisting"
+                  label="Do you have any pre-existing medical conditions?"
+                />
 
                 {formValues.hasPreExisting === 'true' && (
                   <Controller
                     name="preExistingConditions"
                     control={control}
                     render={({ field }) => (
-                      <FormControl error={!!errors.preExistingConditions} fullWidth sx={{ mb: 3, mt: -1, ml: { sm: 2 }, width: { sm: 'calc(100% - 16px)' } }}>
+                      <FormControl
+                        error={!!errors.preExistingConditions}
+                        fullWidth
+                        sx={{ mb: 3, mt: -1, ml: { sm: 2 }, width: { sm: 'calc(100% - 16px)' } }}
+                      >
                         <InputLabel id="conditions-label">Select Conditions</InputLabel>
                         <Select
                           labelId="conditions-label"
@@ -170,9 +231,10 @@ export default function StepCoverage() {
                           {...field}
                           value={field.value || []}
                           input={<OutlinedInput label="Select Conditions" />}
-                          renderValue={(selected) => (selected as string[])
-                            .map((val) => conditionOptions.find((o) => o.value === val)?.label)
-                            .join(', ')
+                          renderValue={(selected) =>
+                            selected
+                              .map((val) => conditionOptions.find((o) => o.value === val)?.label)
+                              .join(', ')
                           }
                         >
                           {conditionOptions.map((option) => (
@@ -182,21 +244,33 @@ export default function StepCoverage() {
                             </MenuItem>
                           ))}
                         </Select>
-                        {errors.preExistingConditions && <FormHelperText>{errors.preExistingConditions.message as string}</FormHelperText>}
+                        {errors.preExistingConditions && (
+                          <FormHelperText>
+                            {errors.preExistingConditions.message as string}
+                          </FormHelperText>
+                        )}
                       </FormControl>
                     )}
                   />
                 )}
 
-                <RadioYesNoField name="takesPrescriptionMedication" label="Do you currently take any prescription medications?" />
+                <RadioYesNoField
+                  name="takesPrescriptionMedication"
+                  label="Do you currently take any prescription medications?"
+                />
                 <RadioYesNoField name="usesTobacco" label="Do you use any tobacco products?" />
-                <RadioYesNoField name="includesSpouse" label="Would you like to include your spouse / domestic partner in this coverage?" />
+                <RadioYesNoField
+                  name="includesSpouse"
+                  label="Would you like to include your spouse / domestic partner in this coverage?"
+                />
               </Box>
             )}
 
-            <StepNavigation 
-              onBack={() => { void navigate(ROUTES.PERSONAL_INFO) }} 
-              isSubmitting={isSubmitting} 
+            <StepNavigation
+              onBack={() => {
+                void navigate(ROUTES.PERSONAL_INFO)
+              }}
+              isSubmitting={isSubmitting}
             />
           </Box>
         </FormProvider>

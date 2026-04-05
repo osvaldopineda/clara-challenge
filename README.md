@@ -131,6 +131,7 @@ Used for declarative, nested routing between wizard steps. Each step is a distin
 - **Browser history integration** — back/forward navigation works naturally.
 - **Deep-linkable steps** for QA testing.
 - URL-driven step validation guards will be added in Phase 3.
+- **Route-based Code Splitting** was implemented using `React.lazy()` to optimize the initial bundle size, mitigating the footprint of the MUI library.
 
 ---
 
@@ -229,7 +230,7 @@ monthlyPremium = basePremium × ageMultiplier × conditionsMultiplier × tobacco
 
 The test suite in `src/utils/premiumCalculator.test.ts` (31 tests) covers:
 
-1. **PDF canonical example** — strict `toBe(327.60)` equality (not `toBeCloseTo`)
+1. **PDF canonical example** — explicitly used the $327.60 canonical example from the PDF as the primary test case to ensure 100% mathematical accuracy.
 2. **Base premium isolation** — each tier with all multipliers at 1.0
 3. **Single-multiplier isolation** — each factor tested independently
 4. **Combined multipliers** — pairwise and all-four-factors combinations across all tiers
@@ -269,8 +270,8 @@ The Clara MUI theme lives in `src/theme/index.ts` and is injected via `ThemeProv
 
 | Token                 | Value     | Use                               |
 | --------------------- | --------- | --------------------------------- |
-| Primary — Clara Navy  | `#1B3A6B` | Header, active step, primary CTAs |
-| Primary Light         | `#2A5298` | Hover states                      |
+| Primary Blue          | `#0D52FF` | Header, active step, primary CTAs |
+| Dark Slate            | `#0F172A` | Secondary accents, text           |
 | Secondary — Warm Teal | `#0097A7` | Completed steps, success accents  |
 | Background Default    | `#F5F7FA` | Page surface                      |
 | Background Paper      | `#FFFFFF` | Cards, inputs                     |
@@ -297,9 +298,8 @@ The Clara MUI theme lives in `src/theme/index.ts` and is injected via `ThemeProv
 `src/context/QuoteContext.tsx` manages the complete wizard state using `useReducer`, giving predictable state transitions without Redux overhead.
 
 ```
-action → reducer → new state → useEffect → localStorage
-                            ↘ re-render
-```
+
+**Lazy Initialization**: `useReducer` leverages the third argument to lazily read from `localStorage` once on mount, preventing redundant synchronous I/O operations from blocking the main thread during render.
 
 **State shape:**
 
@@ -320,7 +320,10 @@ action → reducer → new state → useEffect → localStorage
 Key: `clara_quote_draft`  
 Format: `{ personalInfo: {...} | null, coverage: {...} | null }`
 
-The draft is synced on every state change via `useEffect([state])`. If the user refreshes mid-form, their progress is restored automatically.
+**Why Atomic Persistence?**  
+Atomic Persistence per Step was chosen over "per-keystroke" saving to ensure data integrity (only valid, Yup-verified data is persisted) and to avoid main-thread blocking during rapid input.
+
+The draft is synced on every state change. If the user refreshes mid-form, their validated progress is restored automatically.
 
 ### React Router Setup
 

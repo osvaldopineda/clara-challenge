@@ -89,7 +89,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
           }}
         >
           <ClaraLogo />
-
         </Toolbar>
       </AppBar>
       {!isSuccessPage && <FormStepper />}

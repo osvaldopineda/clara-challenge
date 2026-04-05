@@ -30,7 +30,7 @@ export default function RadioYesNoField({ name, label }: RadioYesNoFieldProps) {
             <FormControlLabel value="true" control={<Radio color="primary" />} label="Yes" />
             <FormControlLabel value="false" control={<Radio color="primary" />} label="No" />
           </RadioGroup>
-          {errors[name] && <FormHelperText>{errors[name]?.message as string}</FormHelperText>}
+          {errors[name] && <FormHelperText>{errors[name].message as string}</FormHelperText>}
         </FormControl>
       )}
     />

@@ -9,9 +9,10 @@ export function useLivePremium(
     preExistingConditions?: string[]
     usesTobacco?: string
     includesSpouse?: string
-  }
+  },
 ) {
-  const { coverageType, hasPreExisting, preExistingConditions, usesTobacco, includesSpouse } = formValues
+  const { coverageType, hasPreExisting, preExistingConditions, usesTobacco, includesSpouse } =
+    formValues
 
   return useMemo(() => {
     if (!coverageType || !['basic', 'standard', 'premium'].includes(coverageType)) {

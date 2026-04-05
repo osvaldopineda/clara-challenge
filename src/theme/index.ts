@@ -1,15 +1,15 @@
 import { createTheme } from '@mui/material/styles'
 import type { ThemeOptions } from '@mui/material/styles'
 
-const BRAND_ACTION = '#011d5fff' 
-const BRAND_ACTION_HOVER = '#022880ff' 
-const BRAND_DARK = '#0F172A' 
-const BRAND_SUCCESS = '#10B981' 
-const SURFACE_BG = '#F8FAFC' 
-const PAPER_BG = '#FFFFFF' 
-const TEXT_MAIN = '#0F172A' 
-const TEXT_MUTED = '#64748B' 
-const BORDER_COLOR = '#E2E8F0' 
+const BRAND_ACTION = '#011d5fff'
+const BRAND_ACTION_HOVER = '#022880ff'
+const BRAND_DARK = '#0F172A'
+const BRAND_SUCCESS = '#10B981'
+const SURFACE_BG = '#F8FAFC'
+const PAPER_BG = '#FFFFFF'
+const TEXT_MAIN = '#0F172A'
+const TEXT_MUTED = '#64748B'
+const BORDER_COLOR = '#E2E8F0'
 
 const themeOptions: ThemeOptions = {
   palette: {

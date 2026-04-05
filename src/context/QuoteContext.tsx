@@ -1,3 +1,4 @@
+/* eslint-disable react-refresh/only-export-components */
 import {
   createContext,
   useContext,
@@ -9,11 +10,12 @@ import {
 import type { PersonalInfoStep, CoverageStep } from '../types/quote.types'
 import { calculatePremium } from '../utils/premiumCalculator'
 import type { PremiumResult } from '../utils/premiumCalculator'
-const STORAGE_KEY = 'clara_quote_draft'
-interface PersistedQuoteState {
-  personalInfo: PersonalInfoStep | null
-  coverage: CoverageStep | null
-}
+import {
+  readFromStorage,
+  writeToStorage,
+  clearStorage,
+  type PersistedQuoteState,
+} from '../utils/storage'
 export interface QuoteState extends PersistedQuoteState {
   premium: PremiumResult | null
 }
@@ -29,7 +31,9 @@ export type QuoteAction =
   | { type: 'RESET' }
 function computePremium(state: QuoteState): PremiumResult | null {
   const { personalInfo, coverage } = state
-  if (!personalInfo || !coverage) return null
+  if (!personalInfo || !coverage) {
+    return null
+  }
   const { age } = personalInfo
   const hasPreExistingConditions = coverage.preExistingConditions.length > 0
   return calculatePremium({
@@ -56,29 +60,7 @@ function quoteReducer(state: QuoteState, action: QuoteAction): QuoteState {
       return state
   }
 }
-function readFromStorage(): Partial<PersistedQuoteState> {
-  try {
-    const raw = localStorage.getItem(STORAGE_KEY)
-    if (!raw) return {}
-    return JSON.parse(raw) as Partial<PersistedQuoteState>
-  } catch {
-    return {}
-  }
-}
-function writeToStorage(state: QuoteState): void {
-  try {
-    const persisted: PersistedQuoteState = {
-      personalInfo: state.personalInfo,
-      coverage: state.coverage,
-    }
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted))
-  } catch {}
-}
-function clearStorage(): void {
-  try {
-    localStorage.removeItem(STORAGE_KEY)
-  } catch {}
-}
+
 interface QuoteContextValue {
   state: QuoteState
   dispatch: React.Dispatch<QuoteAction>

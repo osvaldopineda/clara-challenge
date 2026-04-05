@@ -25,7 +25,11 @@ export default function StepSummary() {
   const errorRef = useRef<HTMLDivElement>(null)
 
   const [isSubmitting, setIsSubmitting] = useState(false)
-  const [snackbar, setSnackbar] = useState<{ open: boolean; message: string; severity: 'success' | 'error' }>({
+  const [snackbar, setSnackbar] = useState<{
+    open: boolean
+    message: string
+    severity: 'success' | 'error'
+  }>({
     open: false,
     message: '',
     severity: 'success',
@@ -83,30 +87,44 @@ export default function StepSummary() {
           <Divider sx={{ mb: 3 }} />
 
           {state.premium && (
-            <PremiumDisplay 
-              monthlyPremium={state.premium.monthlyPremium} 
-              basePremium={state.premium.basePremium} 
-              appliedMultipliers={state.premium.appliedMultipliers} 
+            <PremiumDisplay
+              monthlyPremium={state.premium.monthlyPremium}
+              basePremium={state.premium.basePremium}
+              appliedMultipliers={state.premium.appliedMultipliers}
             />
           )}
 
           <Grid container spacing={3} sx={{ mb: 4 }} aria-labelledby="summary-heading">
             <Grid size={{ xs: 12, md: 6 }}>
               <Paper variant="outlined" sx={{ borderRadius: 1, height: '100%' }}>
-                <Box sx={{ bgcolor: 'rgba(27, 58, 107, 0.04)', px: 2, py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
+                <Box
+                  sx={{
+                    bgcolor: 'rgba(27, 58, 107, 0.04)',
+                    px: 2,
+                    py: 1.5,
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                  }}
+                >
                   <Typography variant="subtitle2" color="primary.main" fontWeight={700}>
                     Personal Information
                   </Typography>
                 </Box>
                 <List dense disablePadding>
                   <ListItem divider>
-                    <ListItemText primary="Name" secondary={`${state.personalInfo.firstName} ${state.personalInfo.lastName}`} />
+                    <ListItemText
+                      primary="Name"
+                      secondary={`${state.personalInfo.firstName} ${state.personalInfo.lastName}`}
+                    />
                   </ListItem>
                   <ListItem divider>
                     <ListItemText primary="Email Address" secondary={state.personalInfo.email} />
                   </ListItem>
                   <ListItem divider>
-                    <ListItemText primary="Age" secondary={`${state.personalInfo.age} ${state.personalInfo.age === 1 ? 'year' : 'years'}`} />
+                    <ListItemText
+                      primary="Age"
+                      secondary={`${String(state.personalInfo.age)} ${state.personalInfo.age === 1 ? 'year' : 'years'}`}
+                    />
                   </ListItem>
                   <ListItem>
                     <ListItemText primary="ZIP Code" secondary={state.personalInfo.zipCode} />
@@ -117,7 +135,15 @@ export default function StepSummary() {
 
             <Grid size={{ xs: 12, md: 6 }}>
               <Paper variant="outlined" sx={{ borderRadius: 1, height: '100%' }}>
-                <Box sx={{ bgcolor: 'rgba(27, 58, 107, 0.04)', px: 2, py: 1.5, borderBottom: '1px solid', borderColor: 'divider' }}>
+                <Box
+                  sx={{
+                    bgcolor: 'rgba(27, 58, 107, 0.04)',
+                    px: 2,
+                    py: 1.5,
+                    borderBottom: '1px solid',
+                    borderColor: 'divider',
+                  }}
+                >
                   <Typography variant="subtitle2" color="primary.main" fontWeight={700}>
                     Coverage Details
                   </Typography>
@@ -126,29 +152,50 @@ export default function StepSummary() {
                   <ListItem divider>
                     <ListItemText
                       primary="Selected Tier"
-                      secondary={state.coverage.coverageType.charAt(0).toUpperCase() + state.coverage.coverageType.slice(1)}
+                      secondary={
+                        state.coverage.coverageType.charAt(0).toUpperCase() +
+                        state.coverage.coverageType.slice(1)
+                      }
                     />
                   </ListItem>
                   <ListItem divider>
-                    <ListItemText primary="Pre-existing Conditions" secondary={state.coverage.preExistingConditions.length > 0 ? state.coverage.preExistingConditions.join(', ') : 'None'} />
+                    <ListItemText
+                      primary="Pre-existing Conditions"
+                      secondary={
+                        state.coverage.preExistingConditions.length > 0
+                          ? state.coverage.preExistingConditions.join(', ')
+                          : 'None'
+                      }
+                    />
                   </ListItem>
                   <ListItem divider>
-                    <ListItemText primary="Takes Prescription Meds" secondary={formatYesNo(state.coverage.takesPrescriptionMedication)} />
+                    <ListItemText
+                      primary="Takes Prescription Meds"
+                      secondary={formatYesNo(state.coverage.takesPrescriptionMedication)}
+                    />
                   </ListItem>
                   <ListItem divider>
-                    <ListItemText primary="Uses Tobacco" secondary={formatYesNo(state.coverage.usesTobacco)} />
+                    <ListItemText
+                      primary="Uses Tobacco"
+                      secondary={formatYesNo(state.coverage.usesTobacco)}
+                    />
                   </ListItem>
                   <ListItem>
-                    <ListItemText primary="Includes Spouse" secondary={formatYesNo(state.coverage.includesSpouse)} />
+                    <ListItemText
+                      primary="Includes Spouse"
+                      secondary={formatYesNo(state.coverage.includesSpouse)}
+                    />
                   </ListItem>
                 </List>
               </Paper>
             </Grid>
           </Grid>
 
-          <StepNavigation 
-            onBack={() => { void navigate(ROUTES.COVERAGE) }} 
-            onNext={handleSubmit}
+          <StepNavigation
+            onBack={() => {
+              void navigate(ROUTES.COVERAGE)
+            }}
+            onNext={() => void handleSubmit()}
             isSubmitting={isSubmitting}
             isLastStep={true}
             showReset={true}
@@ -160,11 +207,15 @@ export default function StepSummary() {
       <Snackbar
         open={snackbar.open}
         autoHideDuration={6000}
-        onClose={() => setSnackbar({ ...snackbar, open: false })}
+        onClose={() => {
+          setSnackbar({ ...snackbar, open: false })
+        }}
         anchorOrigin={{ vertical: 'bottom', horizontal: 'center' }}
       >
         <Alert
-          onClose={() => setSnackbar({ ...snackbar, open: false })}
+          onClose={() => {
+            setSnackbar({ ...snackbar, open: false })
+          }}
           severity={snackbar.severity}
           variant="filled"
           sx={{ width: '100%', borderRadius: 1 }}
@@ -177,7 +228,7 @@ export default function StepSummary() {
                 size="small"
                 variant="outlined"
                 sx={{ px: 2, py: 0.5, textTransform: 'uppercase', fontWeight: 600 }}
-                onClick={handleSubmit}
+                onClick={() => void handleSubmit()}
                 aria-label="Retry submitting quote"
               >
                 RETRY
