@@ -34,7 +34,7 @@ export default function PremiumDisplay({ monthlyPremium, basePremium, appliedMul
         Base: ${basePremium.toFixed(2)} · Multipliers:{' '}
         {Object.entries(appliedMultipliers)
           .filter(([, v]) => v > 1)
-          .map(([name, value]) => `${name} (×${String(value)})`)
+          .map(([name, value]) => `${name}: ${value}x`)
           .join(', ') || 'None applied'}
       </Typography>
     </Alert>

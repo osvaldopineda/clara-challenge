@@ -3,6 +3,7 @@ export const ROUTES = {
   PERSONAL_INFO: '/quote/personal-info',
   COVERAGE: '/quote/coverage',
   SUMMARY: '/quote/summary',
+  SUCCESS: '/quote/success',
 } as const
 export type RouteKey = keyof typeof ROUTES
 export type RoutePath = (typeof ROUTES)[RouteKey]

@@ -51,15 +51,14 @@ export default function StepSummary() {
     setSnackbar({ ...snackbar, open: false })
 
     try {
-      const response = await submitQuote(state)
-      setSnackbar({ open: true, message: response.message, severity: 'success' })
+      await submitQuote(state)
+      void navigate(ROUTES.SUCCESS)
     } catch (error) {
       const err = error as Error
       setSnackbar({ open: true, message: err.message, severity: 'error' })
       setTimeout(() => {
         errorRef.current?.focus()
       }, 0)
-    } finally {
       setIsSubmitting(false)
     }
   }
@@ -69,11 +68,9 @@ export default function StepSummary() {
   return (
     <>
       <Card sx={{ overflow: 'hidden' }}>
-        <Box sx={{ height: 3, backgroundColor: 'primary.main' }} />
-
         <CardContent sx={{ p: { xs: 3, sm: 4 } }}>
           <Box sx={{ display: 'flex', alignItems: 'center', gap: 1.5, mb: 1 }}>
-            <Typography variant="h2" component="h1" color="primary.main" id="summary-heading">
+            <Typography variant="h2" component="h1" id="summary-heading">
               Review Your Quote
             </Typography>
             <Chip label="Step 3 of 3" size="small" color="secondary" sx={{ fontWeight: 700 }} />
@@ -109,7 +106,7 @@ export default function StepSummary() {
                     <ListItemText primary="Email Address" secondary={state.personalInfo.email} />
                   </ListItem>
                   <ListItem divider>
-                    <ListItemText primary="Age" secondary={`${state.personalInfo.age} years`} />
+                    <ListItemText primary="Age" secondary={`${state.personalInfo.age} ${state.personalInfo.age === 1 ? 'year' : 'years'}`} />
                   </ListItem>
                   <ListItem>
                     <ListItemText primary="ZIP Code" secondary={state.personalInfo.zipCode} />
@@ -175,7 +172,7 @@ export default function StepSummary() {
           tabIndex={-1}
           action={
             snackbar.severity === 'error' && (
-              <Button color="inherit" size="small" onClick={handleSubmit} aria-label="Retry submitting quote">
+              <Button color="error" size="small" onClick={handleSubmit} aria-label="Retry submitting quote">
                 RETRY
               </Button>
             )

@@ -1,3 +1,5 @@
+import { useLocation } from 'react-router-dom'
+import { ROUTES } from '../../utils/routes'
 import type { ReactNode } from 'react'
 import AppBar from '@mui/material/AppBar'
 import Box from '@mui/material/Box'
@@ -59,6 +61,9 @@ interface AppLayoutProps {
   children: ReactNode
 }
 export default function AppLayout({ children }: AppLayoutProps) {
+  const location = useLocation()
+  const isSuccessPage = location.pathname === ROUTES.SUCCESS
+
   return (
     <Box
       sx={{
@@ -87,7 +92,7 @@ export default function AppLayout({ children }: AppLayoutProps) {
 
         </Toolbar>
       </AppBar>
-      <FormStepper />
+      {!isSuccessPage && <FormStepper />}
       <Box
         component="main"
         sx={{
@@ -106,32 +111,6 @@ export default function AppLayout({ children }: AppLayoutProps) {
         >
           {children}
         </Container>
-      </Box>
-      <Box
-        component="footer"
-        sx={{
-          py: 2.5,
-          px: 3,
-          borderTop: '1px solid',
-          borderColor: 'divider',
-          backgroundColor: 'background.paper',
-          textAlign: 'center',
-        }}
-      >
-        <Typography variant="caption" color="text.secondary">
-          © {new Date().getFullYear()} Clara Insurance · All rights reserved ·{' '}
-          <Box
-            component="a"
-            href="#"
-            sx={{
-              color: 'primary.main',
-              textDecoration: 'none',
-              '&:hover': { textDecoration: 'underline' },
-            }}
-          >
-            Privacy Policy
-          </Box>
-        </Typography>
       </Box>
     </Box>
   )
